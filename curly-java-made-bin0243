@@ -1,3 +1,4 @@
+game.Players.LocalPlayer:Kick("Moon hub is releasing in 5 mins")
 --Moon | Universal
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
