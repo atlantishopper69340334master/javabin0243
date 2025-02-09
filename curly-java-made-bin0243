@@ -1,2 +1,2195 @@
-game.Players.LocalPlayer:Kick("Moon hub is currently being worked on! Please try again later. https://discord.gg/9gFABDVsP3")
-do local RunService=game:GetService("RunService");local UserInputService=game:GetService("UserInputService");local MarketplaceService=game:GetService("MarketplaceService");local StarterGui=game:GetService("StarterGui");local Players=game:GetService("Players");local plr=Players.LocalPlayer;local char=plr.Character or plr.CharacterAdded:Wait() ;local Library=loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))();local Window=Library.CreateLib("Moon | Universal","Ocean");local HomeTab=Window:NewTab("Home 🏠");local HomeSection=HomeTab:NewSection("Home 🏠");local UTab=Window:NewTab("Universal 🎯");local USection=UTab:NewSection("Universal 🎯");local Tab=Window:NewTab("Prison Life ⛓️‍💥");local Section=Tab:NewSection("Prison Life ⛓️‍💥");local DTab=Window:NewTab("Destruction Simulator 💥");local DSection=DTab:NewSection("Destruction Simulator 💥");local RTab=Window:NewTab("Rivals ⚔️");local RSection=RTab:NewSection("Rivals ⚔️");local ATab=Window:NewTab("Arsenal 🔫");local ASection=ATab:NewSection("Arsenal 🔫");local NDTab=Window:NewTab("Natural Disasters 🌪️");local NDSection=NDTab:NewSection("Natural Disasters 🌪️");local Toggle=false;local ToggleKey=Enum.UserInputType.MouseButton2;local currentTarget=nil;local aimbotEnabled=false;local toggleState=false;local debounce=false;local lockPart="Head";local teamCheck=false;local fov=140;local smoothing=1;local predictionFactor=0.01;local highlightEnabled=true;local FOVring=Drawing.new("Circle");FOVring.Visible=false;FOVring.Thickness=1;FOVring.Radius=fov;FOVring.Transparency=0.8;FOVring.Color=Color3.fromRGB(255,255,255);FOVring.Position=workspace.CurrentCamera.ViewportSize/2 ;function getpos() return game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame;end function GetTeam() return game.Players.LocalPlayer.TeamColor.Name;end function MoveTo(Pos,t) if (typeof(Pos):lower()=="position") then Pos=CFrame.new(Pos);end for i=1,3 do plr.Character:FindFirstChild("HumanoidRootPart").CFrame=Pos;end end function refresh(Pos) if  not Pos then Pos=getpos();end local Goto=Pos or getpos() ;local Connections={};local Cam=workspace.CurrentCamera.CFrame;Connections[1]=game.Players.LocalPlayer.CharacterAdded:Connect(function(charnew) pcall(function() task.spawn(function() workspace.CurrentCamera:GetPropertyChangedSignal("CFrame"):Wait();for i=1,5 do workspace.CurrentCamera.CFrame=Cam;end end);repeat task.wait();until charnew and charnew:FindFirstChild("HumanoidRootPart")  MoveTo(Goto);task.spawn(function() wait(0.05);MoveTo(Goto);end);Connections[1]:Disconnect();end);end);Events.loadchar();print("Refreshed");return;end local function getClosest(cframe) local ray=Ray.new(cframe.Position,cframe.LookVector).Unit;local target=nil;local mag=math.huge;local screenCenter=workspace.CurrentCamera.ViewportSize/2 ;for i,v in pairs(Players:GetPlayers()) do if (v.Character and v.Character:FindFirstChild(lockPart) and v.Character:FindFirstChild("Humanoid") and v.Character:FindFirstChild("HumanoidRootPart") and (v~=Players.LocalPlayer) and ((v.Team~=Players.LocalPlayer.Team) or  not teamCheck)) then local screenPoint,onScreen=workspace.CurrentCamera:WorldToViewportPoint(v.Character[lockPart].Position);local distanceFromCenter=(Vector2.new(screenPoint.X,screenPoint.Y) -screenCenter).Magnitude;if (onScreen and (distanceFromCenter<=fov)) then local magBuf=(v.Character[lockPart].Position-ray:ClosestPoint(v.Character[lockPart].Position)).Magnitude;if (magBuf<mag) then mag=magBuf;target=v;end end end end return target;end function turnOnKAforseconds(seconds) local startTime=os.clock();local mainRemotes=game.ReplicatedStorage;local meleeRemote=mainRemotes['meleeEvent'];while (os.clock() -startTime)<seconds  do for _,plr in pairs(game:GetService("Players"):GetChildren()) do if (plr.Name~=game.Players.LocalPlayer.Name) then meleeRemote:FireServer(plr);end end wait(0.1);end end function teleport(target) game.Players.LocalPlayer.Character.Humanoid.Sit=false;game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=target.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,1) ;end local function updateFOVRing() FOVring.Position=workspace.CurrentCamera.ViewportSize/2 ;end local function highlightTarget(target) if (highlightEnabled and target and target.Character) then local highlight=Instance.new("Highlight");highlight.Adornee=target.Character;highlight.FillColor=Color3.fromRGB(255,128,128);highlight.OutlineColor=Color3.fromRGB(255,0,0);highlight.Parent=target.Character;end end local function removeHighlight(target) if (highlightEnabled and target and target.Character and target.Character:FindFirstChildOfClass("Highlight")) then target.Character:FindFirstChildOfClass("Highlight"):Destroy();end end local function predictPosition(target) if (target and target.Character and target.Character:FindFirstChild("HumanoidRootPart")) then local velocity=target.Character.HumanoidRootPart.Velocity;local position=target.Character[lockPart].Position;local predictedPosition=position + (velocity * predictionFactor) ;return predictedPosition;end return nil;end local function handleToggle() if debounce then return;end debounce=true;toggleState= not toggleState;wait(0.3);debounce=false;end if identifyexecutor() then else Notif("identify executor failed. Your exploit will not support some features.");end function Unfly() FLYING=false;if (flyKeyDown or flyKeyUp) then flyKeyDown:Disconnect();flyKeyUp:Disconnect();end if Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid").PlatformStand=false;end pcall(function() workspace.CurrentCamera.CameraType=Enum.CameraType.Custom;end);end local Players=game:GetService("Players");function getRoot(char) local rootPart=char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso") ;return rootPart;end IYMouse=Players.LocalPlayer:GetMouse();iyflyspeed=2;QEfly=true;if (flyKeyDown or flyKeyUp) then flyKeyDown:Disconnect();flyKeyUp:Disconnect();end local T=getRoot(Players.LocalPlayer.Character);local CONTROL={F=0,B=0,L=0,R=0,Q=0,E=0};local lCONTROL={F=0,B=0,L=0,R=0,Q=0,E=0};local SPEED=0;local function FLY() FLYING=true;local BG=Instance.new("BodyGyro");local BV=Instance.new("BodyVelocity");BG.P=90000;BG.Parent=T;BV.Parent=T;BG.maxTorque=Vector3.new(8999999488,8999999488,8999999488);BG.cframe=T.CFrame;BV.velocity=Vector3.new(0,0,0);BV.maxForce=Vector3.new(8999999488,8999999488,8999999488);task.spawn(function() repeat wait();if Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid").PlatformStand=true;end if (((CONTROL.L + CONTROL.R)~=0) or ((CONTROL.F + CONTROL.B)~=0) or ((CONTROL.Q + CONTROL.E)~=0)) then SPEED=50;elseif ( not (((CONTROL.L + CONTROL.R)~=0) or ((CONTROL.F + CONTROL.B)~=0) or ((CONTROL.Q + CONTROL.E)~=0)) and (SPEED~=0)) then SPEED=0;end if (((CONTROL.L + CONTROL.R)~=0) or ((CONTROL.F + CONTROL.B)~=0) or ((CONTROL.Q + CONTROL.E)~=0)) then BV.velocity=((workspace.CurrentCamera.CoordinateFrame.lookVector * (CONTROL.F + CONTROL.B)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(CONTROL.L + CONTROL.R ,(CONTROL.F + CONTROL.B + CONTROL.Q + CONTROL.E) * 0.2 ,0).p) -workspace.CurrentCamera.CoordinateFrame.p)) * SPEED ;lCONTROL={F=CONTROL.F,B=CONTROL.B,L=CONTROL.L,R=CONTROL.R};elseif (((CONTROL.L + CONTROL.R)==0) and ((CONTROL.F + CONTROL.B)==0) and ((CONTROL.Q + CONTROL.E)==0) and (SPEED~=0)) then BV.velocity=((workspace.CurrentCamera.CoordinateFrame.lookVector * (lCONTROL.F + lCONTROL.B)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(lCONTROL.L + lCONTROL.R ,(lCONTROL.F + lCONTROL.B + CONTROL.Q + CONTROL.E) * 0.2 ,0).p) -workspace.CurrentCamera.CoordinateFrame.p)) * SPEED ;else BV.velocity=Vector3.new(0,0,0);end BG.cframe=workspace.CurrentCamera.CoordinateFrame;until  not FLYING CONTROL={F=0,B=0,L=0,R=0,Q=0,E=0};lCONTROL={F=0,B=0,L=0,R=0,Q=0,E=0};SPEED=0;BG:Destroy();BV:Destroy();if Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid").PlatformStand=false;end end);end flyKeyDown=IYMouse.KeyDown:Connect(function(KEY) if (KEY:lower()=="w") then CONTROL.F=iyflyspeed;elseif (KEY:lower()=="s") then CONTROL.B= -iyflyspeed;elseif (KEY:lower()=="a") then CONTROL.L= -iyflyspeed;elseif (KEY:lower()=="d") then CONTROL.R=iyflyspeed;elseif (QEfly and (KEY:lower()=="e")) then CONTROL.Q=iyflyspeed * 2 ;elseif (QEfly and (KEY:lower()=="q")) then CONTROL.E= -iyflyspeed * 2 ;end pcall(function() workspace.CurrentCamera.CameraType=Enum.CameraType.Track;end);end);flyKeyUp=IYMouse.KeyUp:Connect(function(KEY) if (KEY:lower()=="w") then CONTROL.F=0;elseif (KEY:lower()=="s") then CONTROL.B=0;elseif (KEY:lower()=="a") then CONTROL.L=0;elseif (KEY:lower()=="d") then CONTROL.R=0;elseif (KEY:lower()=="e") then CONTROL.Q=0;elseif (KEY:lower()=="q") then CONTROL.E=0;end end);function Notif(msg) local StarterGui=game:GetService("StarterGui");pcall(function() StarterGui:SetCore("SendNotification",{Title="Moon | Universal",Text=msg,Duration=5});end);end loop=RunService.RenderStepped:Connect(function() if aimbotEnabled then updateFOVRing();local localPlayer=Players.LocalPlayer.Character;local cam=workspace.CurrentCamera;local screenCenter=workspace.CurrentCamera.ViewportSize/2 ;if Toggle then if UserInputService:IsKeyDown(ToggleKey) then handleToggle();end else toggleState=UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2);end if toggleState then if  not currentTarget then currentTarget=getClosest(cam.CFrame);highlightTarget(currentTarget);end if (currentTarget and currentTarget.Character and currentTarget.Character:FindFirstChild(lockPart)) then local predictedPosition=predictPosition(currentTarget);if predictedPosition then workspace.CurrentCamera.CFrame=workspace.CurrentCamera.CFrame:Lerp(CFrame.new(cam.CFrame.Position,predictedPosition),smoothing);end FOVring.Color=Color3.fromRGB(0,255,0);else FOVring.Color=Color3.fromRGB(255,128,128);end else if (currentTarget and highlightEnabled) then removeHighlight(currentTarget);end currentTarget=nil;FOVring.Color=Color3.fromRGB(255,128,128);end end end);function GetGameName() local success,result=pcall(function() return MarketplaceService:GetProductInfo(game.PlaceId).Name;end);if success then return result;else return "Game not found.";end end local homeexecgrabber=identifyexecutor();HomeSection:NewLabel("Welcome, "   .. plr.Name   .. "!" );HomeSection:NewLabel(GetGameName());HomeSection:NewLabel("Executor: "   .. homeexecgrabber );HomeSection:NewButton("Join discord","rawr",function() if setclipboard then setclipboard("dsc.gg/moonexec");Notif("Copied to clipboard. Paste in browser!");else Notif("Your exploit does not support set clipboard.");Notif("dsc.gg/moonexec");end end);USection:NewToggle("Aimbot","rawr",function(state) if state then aimbotEnabled=true;else aimbotEnabled=false;end end);USection:NewSlider("Smoothing","rawr",5,0.01,function(s) smoothing=s;end);USection:NewSlider("Prediction","rawr",5,0.01,function(s) predictionFactor=s;end);USection:NewToggle("TeamCheck","rawr",function(state) if state then teamCheck=true;else teamCheck=false;end end);USection:NewDropdown("Target Part","rawr",{"HumanoidRootPart","Head"},function(currentOption) lockPart=currentOption;end);USection:NewToggle("FOV","rawr",function(state) if state then FOVring.Visible=true;else FOVring.Visible=false;end end);USection:NewButton("Clear Chat","rawr",function() if (game:GetService("TextChatService").ChatVersion==Enum.ChatVersion.TextChatService) then game:GetService("TextChatService").TextChannels.RBXGeneral:SendAsync("hi\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\rCleared Chat.");else Notif("Chat is not supported. Only use on new rbx chat!");end end);USection:NewButton("Admin","rawr",function() loadstring(game:HttpGet("https://raw.githubusercontent.com/pasteisback/MoonScripts/refs/heads/main/infiniteyielduniversal.lua"))();Notif("Executed Infinite Yield");end);USection:NewButton("Panic","rawr",function() game.Players.LocalPlayer:Kick("Moon | Universal | Panic Module Enabled.");end);USection:NewButton("Join Discord","rawr",function() setclipboard("https://discord.gg/9gFABDVsP3");Notif("Discord invite link copied to clipboard.");end);Section:NewButton("Kill Aura","rawr",function() Events={TeamEvent=workspace.Remote.TeamEvent,ShootEvent=game:GetService("ReplicatedStorage").ShootEvent,loadchar=function() if (plr.Team==game.Teams.Inmates) then local ohString1="Bright orange";workspace.Remote.TeamEvent:FireServer(ohString1);else local ohString1="Bright blue";workspace.Remote.TeamEvent:FireServer(ohString1);end end};mainRemotes=game.ReplicatedStorage;meleeRemote=mainRemotes['meleeEvent'];killAura=false;contextactionservice=game.ContextActionService;function toggleKillAura(actionName,inputState,inputObject) if (inputState==Enum.UserInputState.Begin) then if (killAura==true) then killAura=false;else killAura=true;end end end contextactionservice:BindAction("ToggleKillAura",toggleKillAura,false,Enum.KeyCode.P);while wait() do if (killAura==true) then for _,plr in pairs(game:GetService("Players"):GetChildren()) do if (plr.Name~=game.Players.LocalPlayer.Name) then meleeRemote:FireServer(plr);end end end end end);Section:NewButton("Taser Bypass","rawr",function() game.Players.LocalPlayer.Character.ClientInputHandler.Disabled=true;game.Players.LocalPlayer.CharacterAdded:connect(function() game.Workspace:WaitForChild(game.Players.LocalPlayer.Name);game.Players.LocalPlayer.Character.ClientInputHandler.Disabled=true;end);end);Section:NewButton("Arrest Bypass","rawr",function() local exec=identifyexecutor();if ((exec=="Xeno") or "Solara V3.0.0" or "Ugc") then Notif(exec   .. "may not support this feature." );end for i,v in pairs(getconnections(workspace:WaitForChild("Remote").arrestPlayer.OnClientEvent)) do v:Disable();end end);Section:NewButton("Team Guard","rawr",function() workspace.Remote.TeamEvent:FireServer("Bright blue");end);Section:NewButton("Team Neutral","rawr",function() workspace.Remote.TeamEvent:FireServer("Medium stone grey");end);Section:NewButton("Team Inmates","rawr",function() workspace.Remote.TeamEvent:FireServer("Bright orange");end);Section:NewButton("Team Criminals","rawr",function() workspace.Remote.TeamEvent:FireServer("Bright Red");end);Section:NewButton("Arrest All","rawr",function() local Player=game.Players.LocalPlayer;local cpos=Player.Character.HumanoidRootPart.CFrame;for i,v in pairs(game.Teams.Criminals:GetPlayers()) do if (v.Name~=Player.Name) then local i=10;repeat wait();i=i-1 ;game.Workspace.Remote.arrest:InvokeServer(v.Character.HumanoidRootPart);Player.Character.HumanoidRootPart.CFrame=v.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,1) ;until i==0  end end Player.Character.HumanoidRootPart.CFrame=cpos;Notif("Arrested everyone.");end);local eztarget="";Section:NewTextBox("Target","rawr",function(txt) eztarget=txt;end);Section:NewButton("Kill Target","rawr",function() local playerTarget=game.Players:FindFirstChild(eztarget);if playerTarget then local startTime=os.clock();local mainRemotes=game.ReplicatedStorage;local meleeRemote=mainRemotes['meleeEvent'];while (os.clock() -startTime)<3  do for _,plr in pairs(game:GetService("Players"):GetChildren()) do if (plr.Name~=game.Players.LocalPlayer.Name) then meleeRemote:FireServer(plr);teleport(playerTarget);end end wait(0.1);end else warn("Invalid player target:",eztarget);end end);Section:NewButton("Arrest Target","rawr",function() local playerTarget=game.Players:FindFirstChild(eztarget);if playerTarget then game.Workspace.Remote.arrest:InvokeServer(v.Character.HumanoidRootPart);else warn("Invalid player target:",eztarget);end end);Section:NewButton("TP to target","rawr",function() local playerTarget=game.Players:FindFirstChild(eztarget);if playerTarget then game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=playerTarget.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,1) ;else warn("Invalid player target:",eztarget);end end);Section:NewButton("Instant Punch","rawr",function() Events={TeamEvent=workspace.Remote.TeamEvent,ShootEvent=game:GetService("ReplicatedStorage").ShootEvent,loadchar=function() if (plr.Team==game.Teams.Inmates) then local ohString1="Bright orange";workspace.Remote.TeamEvent:FireServer(ohString1);else local ohString1="Bright blue";workspace.Remote.TeamEvent:FireServer(ohString1);end end};mainRemotes=game.ReplicatedStorage;meleeRemote=mainRemotes['meleeEvent'];mouse=game.Players.LocalPlayer:GetMouse();punching=false;cooldown=false;function punch() cooldown=true;local part=Instance.new("Part",game.Players.LocalPlayer.Character);part.Transparency=1;part.Size=Vector3.new(5,2,3);part.CanCollide=false;local w1=Instance.new("Weld",part);w1.Part0=game.Players.LocalPlayer.Character.Torso;w1.Part1=part;w1.C1=CFrame.new(0,0,2);part.Touched:connect(function(hit) if game.Players:FindFirstChild(hit.Parent.Name) then local plr=game.Players:FindFirstChild(hit.Parent.Name);if (plr.Name~=game.Players.LocalPlayer.Name) then part:Destroy();for i=1,100 do meleeRemote:FireServer(plr);end end end end);wait(1);cooldown=false;part:Destroy();end mouse.KeyDown:connect(function(key) if (cooldown==false) then if (key:lower()=="f") then punch();end end end);end);Section:NewButton("Get guns","rawr",function() local saved=game:GetService("Players").LocalPlayer.Character:GetPrimaryPartCFrame();game:GetService("Players").LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(workspace.Prison_ITEMS.giver["Remington 870"].ITEMPICKUP.Position));for i=1,2 do local ohInstance1=game:GetService("Workspace").Prison_ITEMS.giver.M9:GetChildren()[6];workspace.Remote.ItemHandler:InvokeServer(ohInstance1);task.spawn(function() for i=1,3 do workspace.Remote.ItemHandler:InvokeServer(ohInstance1);end end);local ohInstance2=workspace.Prison_ITEMS.giver["Remington 870"].ITEMPICKUP;workspace.Remote.ItemHandler:InvokeServer(ohInstance2);task.spawn(function() for i=1,3 do workspace.Remote.ItemHandler:InvokeServer(ohInstance2);end end);local ohInstance3=game:GetService("Workspace").Prison_ITEMS.giver["AK-47"]:GetChildren()[51];wait();game:GetService("Players").LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(game:GetService("Workspace").Prison_ITEMS.giver["AK-47"]:GetChildren()[51].Position + Vector3.new(0,4,0) ));workspace.Remote.ItemHandler:InvokeServer(ohInstance3);task.spawn(function() for i=1,3 do workspace.Remote.ItemHandler:InvokeServer(ohInstance3);end end);end game:GetService("Players").LocalPlayer.Character:SetPrimaryPartCFrame(saved);end);Section:NewButton("No doors","rawr",function() workspace.Prison_Cellblock.doors:Destroy();for i,v in pairs(workspace:GetChildren()) do if (v.Name=="Doors") then v:Destroy();end end end);Section:NewButton("Btools","rawr",function() local tool1=Instance.new("HopperBin",game.Players.LocalPlayer.Backpack);local tool2=Instance.new("HopperBin",game.Players.LocalPlayer.Backpack);local tool3=Instance.new("HopperBin",game.Players.LocalPlayer.Backpack);local tool4=Instance.new("HopperBin",game.Players.LocalPlayer.Backpack);local tool5=Instance.new("HopperBin",game.Players.LocalPlayer.Backpack);tool1.BinType="Clone";tool2.BinType="GameTool";tool3.BinType="Hammer";tool4.BinType="Script";tool5.BinType="Grab";Notif("You have received btools.");end);Section:NewButton("Mod equipped gun","rawr",function() Events={TeamEvent=workspace.Remote.TeamEvent,ShootEvent=game:GetService("ReplicatedStorage").ShootEvent,loadchar=function() if (plr.Team==game.Teams.Inmates) then local ohString1="Bright orange";workspace.Remote.TeamEvent:FireServer(ohString1);else local ohString1="Bright blue";workspace.Remote.TeamEvent:FireServer(ohString1);end end};Reload_Guns={};if plr.Character:FindFirstChildOfClass("Tool") then local Tool=plr.Character:FindFirstChildOfClass("Tool");if  not Tool:FindFirstChild("GunStates") then return Notif("Needs to be a gun!");end local cc=require(Tool.GunStates);cc['Damage']=8999999488;cc['FireRate']=0.001;cc['Range']=math.huge;cc['MaxAmmo']=math.huge;cc['StoredAmmo']=math.huge;cc['AmmoPerClip']=math.huge;cc['CurrentAmmo']=math.huge;if (Tool.Name~="Remington 870") then cc['Bullets']=1;cc['AutoFire']=true;end Notif("Modded "   .. Tool );else Notif("You need to hold the tool you want to mod!");end end);Section:NewButton("TP inside of prison","rawr",function() game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(879,99,2377);end);Section:NewButton("TP to criminal base","rawr",function() game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new( -943,96,2055);end);Section:NewButton("TP to guard area","rawr",function() game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(802,99,2270);end);Section:NewButton("Loop kill all","rawr",function() Notif("Not killing? Kill Aura is required to be on.");local players=game:GetService("Players"):GetPlayers();while wait(1) do if ( #players>0) then local randomIndex=math.random(1, #players);local randomPlayer=players[randomIndex];if (randomPlayer.Character and randomPlayer.Character:FindFirstChild("HumanoidRootPart")) then Notif("Killing "   .. randomPlayer.Name );game.Players.LocalPlayer.Character.Humanoid.Sit=false;game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame=randomPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,1) ;else print("Selected player has no character or HumanoidRootPart.");end else print("No players in the game.");end end end);Section:NewButton("Godmode","rawr",function() repeat task.wait();until char and char:FindFirstChildOfClass("Humanoid")  char:FindFirstChildOfClass("Humanoid").BreakJointsOnDeath=false;char:FindFirstChildOfClass("Humanoid").Died:Connect(function() refresh();end);end);local moneyamt=0;local lvlamt=0;DSection:NewTextBox("Coins","press enter to confirm num",function(txt) moneyamt=tonumber(txt) or 0 ;end);DSection:NewTextBox("Level","press enter to confirm num",function(txt) lvlamt=tonumber(txt) or 0 ;end);DSection:NewButton("Add Coins","max: 99,999,999",function() if (moneyamt>0) then local Event=game:GetService("ReplicatedStorage").Remotes.generateBoost;Event:FireServer("Coins",999999,moneyamt);Notif("Added "   .. moneyamt   .. " Coins!" );else Notif("Invalid Coins amount!");end end);DSection:NewButton("Add Level","max: 55",function() local Amount=lvlamt;if (Amount and (Amount>0)) then local Event=game:GetService("ReplicatedStorage").Remotes.generateBoost;local LevelValue=game.Players.LocalPlayer.leaderstats.Level;if (Amount>LevelValue.Value) then local Difference=Amount-LevelValue.Value ;repeat local FireAmount=math.min(Difference,15);Event:FireServer("Levels",480,FireAmount);Difference-=FireAmount wait();until Difference==0  elseif (Amount<LevelValue.Value) then local Difference=LevelValue.Value-Amount ;repeat local FireAmount=math.min(Difference,15);Event:FireServer("Levels",480, -FireAmount);Difference-=FireAmount wait();until Difference==0  end Notif("Set Level to "   .. lvlamt   .. "!" );else Notif("Invalid Level amount!");end end);DSection:NewButton("Sell Bricks","rawr",function() local Event=game:GetService("ReplicatedStorage").Remotes.sellBricks;Event:FireServer();Notif("Sold bricks.");end);function displayInfBackpack() local amnt=game:GetService("Players").LocalPlayer.PlayerGui.MainUI.StatsFrame.Stats.Bricks.amnt;local backpackamnt=workspace.IllIlIllIlIlIIIllIll.Backpack.HUD.backpackUI.amnt;local newamnt=amnt:Clone();local newamnt2=backpackamnt:Clone();newamnt.Name="amount";newamnt2.Name="amount";newamnt.Text="inf";newamnt2.Text="inf";newamnt.Parent=amnt.Parent;newamnt2.Parent=backpackamnt.Parent;amnt:Destroy();backpackamnt:Destroy();end DSection:NewButton("Get inf backpack","rawr",function() while true do local Event=game:GetService("ReplicatedStorage").Remotes.sellBricks;Event:FireServer();displayInfBackpack();wait(0.1);end end);DSection:NewToggle("Spam money","rawr",function(state) while state do local Event=game:GetService("ReplicatedStorage").Remotes.generateBoost;Event:FireServer("Coins",999999,99999999);wait(0.1);end end);DSection:NewToggle("Spam sell bricks","rawr",function(state) while state do local Event=game:GetService("ReplicatedStorage").Remotes.sellBricks;Event:FireServer();wait(0.00001);end end);DSection:NewButton("Spam money 5-10b/sec","max: 99,999,999",function() local Event=game:GetService("ReplicatedStorage").Remotes.generateBoost;while true do Event:FireServer("Coins",999999,99999999);wait(0.1);while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end while true do Event:FireServer("Coins",999999,99999999);wait(0.1);end end end);local areatochange;DSection:NewTextBox("Area","press enter to confirm num",function(txt) areatochange=tonumber(txt) or 0 ;end);DSection:NewButton("Change area","tells the game ur in # area",function() local areaevent=game:GetService("ReplicatedStorage").Remotes.areaChanged;areaevent:FireServer(areatochange);end);local boosttypeforplr;local boostdurationforplr=180;local boostmultiplierforplr=2;DSection:NewDropdown("Boost Type","rawr",{"XP","Super Jump","Coin","Brick","Speed"},function(currentOption) boosttypeforplr=currentOption;end);DSection:NewTextBox("Duration of Boost","Press enter to confirm number",function(txt) boostdurationforplr=tonumber(txt) or 0 ;end);DSection:NewTextBox("Multiplier of Boost","Press enter to confirm number",function(txt) boostmultiplierforplr=tonumber(txt) or 0 ;end);DSection:NewButton("Boost","rawr",function() local boostevent=game:GetService("ReplicatedStorage"):FindFirstChild("Remotes") and game:GetService("ReplicatedStorage").Remotes:FindFirstChild("generateBoost") ;if  not boostevent then warn("Boost event not found!");return;end if  not boosttypeforplr then warn("No boost type selected!");return;end local boostMapping={Speed="ExtraSpeed",XP="XPBoost",["Super Jump"]="SuperJump",Brick="BrickBoost",Coin="CoinBoost"};local boostKey=boostMapping[boosttypeforplr];if boostKey then boostevent:FireServer(boostKey,boostdurationforplr,boostmultiplierforplr);else warn("Invalid boost type!");end end);RSection:NewButton("Slient-Aim","rawr",function() loadstring(game:HttpGet("https://raw.githubusercontent.com/pasteisback/Xploit/refs/heads/main/RivalsSlientAim"))();end);RSection:NewButton("ESP","rawr",function() loadstring(game:HttpGet("https://raw.githubusercontent.com/pasteisback/Xploit/refs/heads/main/ArsenalESP"))();end);RSection:NewButton("Fly","rawr",function() Notif("Credits to IY dev(s)");FLY();end);RSection:NewButton("Unfly","rawr",function() Notif("Credits to IY dev(s)");Unfly();end);ASection:NewButton("Slient-Aim","rawr",function() function getplrsname() for i,v in pairs(game:GetChildren()) do if (v.ClassName=="Players") then return v.Name;end end end local players=getplrsname();local plr=game[players].LocalPlayer;coroutine.resume(coroutine.create(function() while wait(1) do coroutine.resume(coroutine.create(function() for _,v in pairs(game[players]:GetPlayers()) do if ((v.Name~=plr.Name) and v.Character) then v.Character.RightUpperLeg.CanCollide=false;v.Character.RightUpperLeg.Transparency=10;v.Character.RightUpperLeg.Size=Vector3.new(13,13,13);v.Character.LeftUpperLeg.CanCollide=false;v.Character.LeftUpperLeg.Transparency=10;v.Character.LeftUpperLeg.Size=Vector3.new(13,13,13);v.Character.HeadHB.CanCollide=false;v.Character.HeadHB.Transparency=10;v.Character.HeadHB.Size=Vector3.new(13,13,13);v.Character.HumanoidRootPart.CanCollide=false;v.Character.HumanoidRootPart.Transparency=10;v.Character.HumanoidRootPart.Size=Vector3.new(13,13,13);end end end));end end));end);ASection:NewButton("ESP","rawr",function() loadstring(game:HttpGet("https://raw.githubusercontent.com/pasteisback/Xploit/refs/heads/main/ArsenalESP"))();end);ASection:NewButton("Mod Recoil","rawr",function() local replicationstorage=game.ReplicatedStorage;while wait(5) do for i,v in pairs(replicationstorage.Weapons:GetDescendants()) do if (v.Name=="RecoilControl") then v.Value=0;end if (v.Name=="MaxSpread") then v.Value=0;end end end end);ASection:NewButton("Inf Ammo","rawr",function() local replicationstorage=game.ReplicatedStorage;while wait() do game:GetService("Players").LocalPlayer.PlayerGui.GUI.Client.Variables.ammocount.Value=999;game:GetService("Players").LocalPlayer.PlayerGui.GUI.Client.Variables.ammocount2.Value=999;end end);ASection:NewButton("Mod Fire-Rate","rawr",function() local replicationstorage=game.ReplicatedStorage;while wait(5) do for i,v in pairs(replicationstorage.Weapons:GetDescendants()) do if (v.Name=="Auto") then v.Value=true;end if (v.Name=="FireRate") then v.Value=0.02;end end end end);NDSection:NewButton("Get disaster","rawr",function() local ndplr=game.Players.LocalPlayer;local wsplr=workspace:FindFirstChild(ndplr.Name);local tag;if wsplr:FindFirstChild("SurvivalTag") then tag=wsplr.SurvivalTag;Notif(tag.Value);else Notif("wait until you are on island");end end); end
+--Moon | Universal
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local MarketplaceService = game:GetService("MarketplaceService")
+local StarterGui = game:GetService("StarterGui")
+local Players = game:GetService("Players")
+local plr = Players.LocalPlayer
+local char = plr.Character or plr.CharacterAdded:Wait()
+local Workspace = game:GetService("Workspace")
+local LocalPlayer = Players.LocalPlayer
+local HttpService = game:GetService("HttpService")
+
+local humanoidRootPart = char:WaitForChild("HumanoidRootPart")
+
+local config = {
+	radius = 50,
+	height = 100,
+	speed = 10,
+	strength = 1000,
+	theme = "Ocean",
+	bind = "RightShift",
+}
+
+local function SaveConfig()
+	local configStr = HttpService:JSONEncode(config)
+	writefile("MoonConfig.txt", configStr)
+end
+
+local function loadConfig()
+	if isfile("MoonConfig.txt") then
+		local configStr = readfile("MoonConfig.txt")
+		config = HttpService:JSONDecode(configStr)
+	end
+end
+
+loadConfig()
+
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/pasteisback/MoonHubKavo/refs/heads/main/src.lua"))()
+local Window = Library.CreateLib("Moon | Universal", config.theme)
+
+local HomeTab = Window:NewTab("Home 🏠")
+local HomeSection = HomeTab:NewSection("Home 🏠")
+local UTab = Window:NewTab("Universal 🎯")
+local USection = UTab:NewSection("Universal 🎯")
+local Tab = Window:NewTab("Prison Life ⛓️‍💥")
+local Section = Tab:NewSection("Prison Life ⛓️‍💥")
+local DTab = Window:NewTab("Destruction Simulator 💥")
+local DSection = DTab:NewSection("Destruction Simulator 💥")
+local RTab = Window:NewTab("Rivals ⚔️")
+local RSection = RTab:NewSection("Rivals ⚔️")
+local FischTab = Window:NewTab("Fisch 🐟")
+local FischSection = FischTab:NewSection("Fisch 🐟")
+local ATab = Window:NewTab("Arsenal 🔫")
+local ASection = ATab:NewSection("Arsenal 🔫")
+local NDTab = Window:NewTab("Natural Disasters 🌪️")
+local NDSection = NDTab:NewSection("Natural Disasters 🌪️")
+local SetsTab = Window:NewTab("Settings ⚙️")
+local SetsSection = SetsTab:NewSection("Settings ⚙️")
+
+local Toggle = false
+local ToggleKey = Enum.UserInputType.MouseButton2
+local currentTarget = nil
+local aimbotEnabled = false
+local toggleState = false
+local debounce = false
+local lockPart = "Head"
+local teamCheck = false
+local fov = 140
+local smoothing = 1
+local predictionFactor = 0.01
+local highlightEnabled = true
+
+local FOVring = Drawing.new("Circle")
+FOVring.Visible = false
+FOVring.Thickness = 1
+FOVring.Radius = fov
+FOVring.Transparency = 0.8
+FOVring.Color = Color3.fromRGB(255, 255, 255)
+FOVring.Position = workspace.CurrentCamera.ViewportSize / 2
+
+function getpos()
+	return game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame
+end
+
+function GetTeam()
+	return game.Players.LocalPlayer.TeamColor.Name
+end
+
+function MoveTo(Pos,t)
+	if typeof(Pos):lower() == "position" then
+		Pos = CFrame.new(Pos)
+	end
+	for i =1,3 do
+		plr.Character:FindFirstChild("HumanoidRootPart").CFrame = Pos
+	end
+end
+
+function getRoot(char)
+	local rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
+	return rootPart
+end
+
+function refresh(Pos)
+	if not Pos then
+		Pos = getpos()
+	end
+	local Goto = Pos or getpos()
+	local Connections = {}
+	local Cam = workspace.CurrentCamera.CFrame
+	Connections[1] = game.Players.LocalPlayer.CharacterAdded:Connect(function(charnew)
+		pcall(function()
+			task.spawn(function()
+				workspace.CurrentCamera:GetPropertyChangedSignal("CFrame"):Wait()
+				for i =1,5 do
+					workspace.CurrentCamera.CFrame = Cam
+				end
+			end)
+			repeat task.wait() until charnew and charnew:FindFirstChild("HumanoidRootPart")
+			MoveTo(Goto)
+			task.spawn(function()
+				wait(.05)
+				MoveTo(Goto)
+			end)
+			Connections[1]:Disconnect()
+		end)
+	end)
+	Events.loadchar()
+	print("Refreshed")
+	return
+end
+
+function r15(plr)
+	if plr.Character:FindFirstChildOfClass('Humanoid').RigType == Enum.HumanoidRigType.R15 then
+		return true
+	end
+end
+
+local function getClosest(cframe)
+	local ray = Ray.new(cframe.Position, cframe.LookVector).Unit
+	local target = nil
+	local mag = math.huge
+	local screenCenter = workspace.CurrentCamera.ViewportSize / 2
+
+	for i, v in pairs(Players:GetPlayers()) do
+		if v.Character and v.Character:FindFirstChild(lockPart) and v.Character:FindFirstChild("Humanoid") and v.Character:FindFirstChild("HumanoidRootPart") and v ~= Players.LocalPlayer and (v.Team ~= Players.LocalPlayer.Team or (not teamCheck)) then
+			local screenPoint, onScreen = workspace.CurrentCamera:WorldToViewportPoint(v.Character[lockPart].Position)
+			local distanceFromCenter = (Vector2.new(screenPoint.X, screenPoint.Y) - screenCenter).Magnitude
+
+			if onScreen and distanceFromCenter <= fov then
+				local magBuf = (v.Character[lockPart].Position - ray:ClosestPoint(v.Character[lockPart].Position)).Magnitude
+
+				if magBuf < mag then
+					mag = magBuf
+					target = v
+				end
+			end
+		end
+	end
+
+	return target
+end
+
+function turnOnKAforseconds(seconds)
+	local startTime = os.clock()
+	local mainRemotes = game.ReplicatedStorage
+	local meleeRemote = mainRemotes['meleeEvent']
+
+	while os.clock() - startTime < seconds do
+		for _, plr in pairs(game:GetService('Players'):GetChildren()) do
+			if plr.Name ~= game.Players.LocalPlayer.Name then
+				meleeRemote:FireServer(plr)
+			end
+		end
+		wait(0.1)
+	end
+end
+
+function teleport(target)
+	game.Players.LocalPlayer.Character.Humanoid.Sit = false
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1)
+end
+
+local function updateFOVRing()
+	FOVring.Position = workspace.CurrentCamera.ViewportSize / 2
+end
+
+local function highlightTarget(target)
+	if highlightEnabled and target and target.Character then
+		local highlight = Instance.new("Highlight")
+		highlight.Adornee = target.Character
+		highlight.FillColor = Color3.fromRGB(255, 128, 128)
+		highlight.OutlineColor = Color3.fromRGB(255, 0, 0)
+		highlight.Parent = target.Character
+	end
+end
+
+local function removeHighlight(target)
+	if highlightEnabled and target and target.Character and target.Character:FindFirstChildOfClass("Highlight") then
+		target.Character:FindFirstChildOfClass("Highlight"):Destroy()
+	end
+end
+
+local function predictPosition(target)
+	if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+		local velocity = target.Character.HumanoidRootPart.Velocity
+		local position = target.Character[lockPart].Position
+		local predictedPosition = position + (velocity * predictionFactor)
+		return predictedPosition
+	end
+	return nil
+end
+
+local function handleToggle()
+	if debounce then return end
+	debounce = true
+	toggleState = not toggleState
+	wait(0.3)
+	debounce = false
+end
+
+if identifyexecutor() then else Notif("identify executor failed. Your exploit will not support some features.") end
+
+function Unfly()
+	FLYING = false
+	if flyKeyDown or flyKeyUp then flyKeyDown:Disconnect() flyKeyUp:Disconnect() end
+	if Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') then
+		Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
+	end
+	pcall(function() workspace.CurrentCamera.CameraType = Enum.CameraType.Custom end)
+end
+
+local Players = game:GetService("Players")
+
+function getRoot(char)
+	local rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
+	return rootPart
+end
+
+IYMouse = Players.LocalPlayer:GetMouse()
+iyflyspeed = 2
+QEfly = true
+
+if flyKeyDown or flyKeyUp then flyKeyDown:Disconnect() flyKeyUp:Disconnect() end
+
+local T = getRoot(Players.LocalPlayer.Character)
+local CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+local lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+local SPEED = 0
+
+local function FLY()
+	FLYING = true
+	local BG = Instance.new('BodyGyro')
+	local BV = Instance.new('BodyVelocity')
+	BG.P = 9e4
+	BG.Parent = T
+	BV.Parent = T
+	BG.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+	BG.cframe = T.CFrame
+	BV.velocity = Vector3.new(0, 0, 0)
+	BV.maxForce = Vector3.new(9e9, 9e9, 9e9)
+	task.spawn(function()
+		repeat wait()
+			if Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') then
+				Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
+			end
+			if CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0 then
+				SPEED = 50
+			elseif not (CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0) and SPEED ~= 0 then
+				SPEED = 0
+			end
+			if (CONTROL.L + CONTROL.R) ~= 0 or (CONTROL.F + CONTROL.B) ~= 0 or (CONTROL.Q + CONTROL.E) ~= 0 then
+				BV.velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (CONTROL.F + CONTROL.B)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(CONTROL.L + CONTROL.R, (CONTROL.F + CONTROL.B + CONTROL.Q + CONTROL.E) * 0.2, 0).p) - workspace.CurrentCamera.CoordinateFrame.p)) * SPEED
+				lCONTROL = {F = CONTROL.F, B = CONTROL.B, L = CONTROL.L, R = CONTROL.R}
+			elseif (CONTROL.L + CONTROL.R) == 0 and (CONTROL.F + CONTROL.B) == 0 and (CONTROL.Q + CONTROL.E) == 0 and SPEED ~= 0 then
+				BV.velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (lCONTROL.F + lCONTROL.B)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(lCONTROL.L + lCONTROL.R, (lCONTROL.F + lCONTROL.B + CONTROL.Q + CONTROL.E) * 0.2, 0).p) - workspace.CurrentCamera.CoordinateFrame.p)) * SPEED
+			else
+				BV.velocity = Vector3.new(0, 0, 0)
+			end
+			BG.cframe = workspace.CurrentCamera.CoordinateFrame
+		until not FLYING
+		CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+		lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+		SPEED = 0
+		BG:Destroy()
+		BV:Destroy()
+		if Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid') then
+			Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
+		end
+	end)
+end
+flyKeyDown = IYMouse.KeyDown:Connect(function(KEY)
+	if KEY:lower() == 'w' then
+		CONTROL.F = (iyflyspeed)
+	elseif KEY:lower() == 's' then
+		CONTROL.B = - (iyflyspeed)
+	elseif KEY:lower() == 'a' then
+		CONTROL.L = - (iyflyspeed)
+	elseif KEY:lower() == 'd' then 
+		CONTROL.R = (iyflyspeed)
+	elseif QEfly and KEY:lower() == 'e' then
+		CONTROL.Q = (iyflyspeed)*2
+	elseif QEfly and KEY:lower() == 'q' then
+		CONTROL.E = -(iyflyspeed)*2
+	end
+	pcall(function() workspace.CurrentCamera.CameraType = Enum.CameraType.Track end)
+end)
+flyKeyUp = IYMouse.KeyUp:Connect(function(KEY)
+	if KEY:lower() == 'w' then
+		CONTROL.F = 0
+	elseif KEY:lower() == 's' then
+		CONTROL.B = 0
+	elseif KEY:lower() == 'a' then
+		CONTROL.L = 0
+	elseif KEY:lower() == 'd' then
+		CONTROL.R = 0
+	elseif KEY:lower() == 'e' then
+		CONTROL.Q = 0
+	elseif KEY:lower() == 'q' then
+		CONTROL.E = 0
+	end
+end)
+
+function Notif(msg)
+	local StarterGui = game:GetService("StarterGui")
+	pcall(function()
+		StarterGui:SetCore("SendNotification", {
+			Title = "Moon | Universal",
+			Text = msg,
+			Duration = 5
+		})
+	end)
+end
+
+loop = RunService.RenderStepped:Connect(function()
+	if aimbotEnabled then
+		updateFOVRing()
+
+		local localPlayer = Players.LocalPlayer.Character
+		local cam = workspace.CurrentCamera
+		local screenCenter = workspace.CurrentCamera.ViewportSize / 2
+
+		if Toggle then
+			if UserInputService:IsKeyDown(ToggleKey) then
+				handleToggle()
+			end
+		else
+			toggleState = UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2)
+		end
+
+		if toggleState then
+			if not currentTarget then
+				currentTarget = getClosest(cam.CFrame)
+				highlightTarget(currentTarget)
+			end
+
+			if currentTarget and currentTarget.Character and currentTarget.Character:FindFirstChild(lockPart) then
+				local predictedPosition = predictPosition(currentTarget)
+				if predictedPosition then
+					workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame:Lerp(CFrame.new(cam.CFrame.Position, predictedPosition), smoothing)
+				end
+				FOVring.Color = Color3.fromRGB(0, 255, 0)
+			else
+				FOVring.Color = Color3.fromRGB(255, 128, 128)
+			end
+		else
+			if currentTarget and highlightEnabled then
+				removeHighlight(currentTarget)
+			end
+			currentTarget = nil
+			FOVring.Color = Color3.fromRGB(255, 128, 128)
+		end
+	end
+end)
+
+function GetGameName()
+	local success, result = pcall(function()
+		return MarketplaceService:GetProductInfo(game.PlaceId).Name
+	end)
+
+	if success then
+		return result
+	else
+		return "Game not found."
+	end
+end
+
+--home
+local homeexecgrabber = identifyexecutor()
+HomeSection:NewLabel("Welcome, "..plr.Name.."!")
+HomeSection:NewLabel(GetGameName())
+HomeSection:NewLabel("Executor: "..homeexecgrabber)
+
+HomeSection:NewButton("Join discord", "rawr", function()
+	SaveConfig()
+	if setclipboard then
+		setclipboard("dsc.gg/moonexec")
+		Notif("Copied to clipboard. Paste in browser!")
+	else
+		Notif("Your exploit does not support set clipboard.")
+		Notif("dsc.gg/moonexec")
+	end
+end)
+
+--universal
+USection:NewToggle("Aimbot", "rawr", function(state)
+	SaveConfig()
+	if state then
+		aimbotEnabled = true
+	else
+		aimbotEnabled = false
+	end
+end)
+
+USection:NewSlider("Smoothing", "rawr", 5, 0.01, function(s)
+	SaveConfig()
+	smoothing = s
+end)
+
+USection:NewSlider("Prediction", "rawr", 5, 0.01, function(s)
+	SaveConfig()
+	predictionFactor = s
+end)
+
+USection:NewToggle("TeamCheck", "rawr", function(state)
+	SaveConfig()
+	if state then
+		teamCheck = true
+	else
+		teamCheck = false
+	end
+end)
+
+USection:NewDropdown("Target Part", "rawr", {"HumanoidRootPart", "Head"}, function(currentOption)
+	SaveConfig()
+	lockPart = currentOption
+end)
+
+USection:NewToggle("FOV", "rawr", function(state)
+	SaveConfig()
+	if state then
+		FOVring.Visible = true
+	else
+		FOVring.Visible = false
+	end
+end)
+
+USection:NewSlider("WalkSpeed", "rawr", 145, 0, function(s)
+	game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = s
+end)
+
+USection:NewSlider("JumpPower", "rawr", 545, 0, function(s)
+	game.Players.LocalPlayer.Character.Humanoid.JumpPower = s
+end)
+
+local rapetarget = ""
+USection:NewTextBox("User to rape", "rawr", function(txt)
+	SaveConfig()
+	rapetarget = txt
+end)
+
+USection:NewToggle("Rape", "rawr", function(state)
+	if state then
+		wait()
+
+	else
+		print("Toggle Off")
+	end
+end)
+
+USection:NewButton("Clear Chat", "rawr", function()
+	SaveConfig()
+	if game:GetService("TextChatService").ChatVersion == Enum.ChatVersion.TextChatService then
+		game:GetService("TextChatService").TextChannels.RBXGeneral:SendAsync("hi\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\rCleared Chat.")
+	else
+		Notif("Chat is not supported. Only use on new rbx chat!")
+	end
+end)
+
+USection:NewButton("Admin", "rawr", function()
+	SaveConfig()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/pasteisback/MoonScripts/refs/heads/main/infiniteyielduniversal.lua"))()
+	Notif("Executed Infinite Yield")
+end)
+
+USection:NewButton("Panic", "rawr", function()
+	SaveConfig()
+	game.Players.LocalPlayer:Kick("Moon | Universal | Panic Module Enabled.")
+end)
+
+USection:NewButton("Join Discord", "rawr", function()
+	SaveConfig()
+	setclipboard("https://discord.gg/9gFABDVsP3")
+	Notif("Discord invite link copied to clipboard.")
+end)
+
+--Prison life
+Section:NewButton("Kill Aura", "rawr", function()
+	SaveConfig()
+	Events = {
+		TeamEvent = workspace.Remote.TeamEvent,
+		ShootEvent = game:GetService("ReplicatedStorage").ShootEvent,
+		loadchar = function()
+			if plr.Team == game.Teams.Inmates then
+				local ohString1 = "Bright orange"
+				workspace.Remote.TeamEvent:FireServer(ohString1)
+			else
+				local ohString1 = "Bright blue"
+				workspace.Remote.TeamEvent:FireServer(ohString1)
+			end
+		end,
+	}
+
+	mainRemotes = game.ReplicatedStorage
+	meleeRemote = mainRemotes['meleeEvent']
+
+	killAura = false
+
+	contextactionservice = game.ContextActionService
+
+	function toggleKillAura(actionName, inputState, inputObject)
+		if inputState == Enum.UserInputState.Begin then
+			if killAura == true then
+				killAura = false
+			else
+				killAura = true
+			end
+		end
+	end
+
+	contextactionservice:BindAction('ToggleKillAura', toggleKillAura, false, Enum.KeyCode.P)
+
+	while wait() do
+		if killAura == true then
+			for _, plr in pairs(game:GetService('Players'):GetChildren()) do
+				if plr.Name ~= game.Players.LocalPlayer.Name then
+					meleeRemote:FireServer(plr)
+				end
+			end
+		end
+	end 
+end)
+
+Section:NewButton("Taser Bypass", "rawr", function()
+	SaveConfig()
+	game.Players.LocalPlayer.Character.ClientInputHandler.Disabled = true
+	game.Players.LocalPlayer.CharacterAdded:connect(function()
+		game.Workspace:WaitForChild(game.Players.LocalPlayer.Name)
+		game.Players.LocalPlayer.Character.ClientInputHandler.Disabled = true
+	end)
+end)
+
+Section:NewButton("Arrest Bypass", "rawr", function()
+	SaveConfig()
+	local exec = identifyexecutor()
+	if exec == "Xeno" or "Solara V3.0.0" or "Ugc" then Notif(exec.."may not support this feature.") end
+	for i,v in pairs(getconnections(workspace:WaitForChild("Remote").arrestPlayer.OnClientEvent)) do
+		v:Disable()
+	end
+end)
+
+Section:NewButton("Team Guard", "rawr", function()
+	SaveConfig()
+	workspace.Remote.TeamEvent:FireServer("Bright blue")
+end)
+
+Section:NewButton("Team Neutral", "rawr", function()
+	SaveConfig()
+	workspace.Remote.TeamEvent:FireServer("Medium stone grey")
+end)
+
+Section:NewButton("Team Inmates", "rawr", function()
+	SaveConfig()
+	workspace.Remote.TeamEvent:FireServer("Bright orange")
+end)
+
+Section:NewButton("Team Criminals", "rawr", function()
+	SaveConfig()
+	workspace.Remote.TeamEvent:FireServer("Bright Red")
+end)
+
+Section:NewButton("Arrest All", "rawr", function()
+	SaveConfig()
+	local Player = game.Players.LocalPlayer
+	local cpos = Player.Character.HumanoidRootPart.CFrame
+	for i,v in pairs(game.Teams.Criminals:GetPlayers()) do
+		if v.Name ~= Player.Name then
+			local i = 10
+			repeat
+				wait()
+				i = i-1
+				game.Workspace.Remote.arrest:InvokeServer(v.Character.HumanoidRootPart)
+				Player.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1)
+			until i == 0
+		end
+	end
+	Player.Character.HumanoidRootPart.CFrame = cpos
+	Notif("Arrested everyone.")
+end)
+
+local eztarget = ""
+Section:NewTextBox("Target", "rawr", function(txt)
+	SaveConfig()
+	eztarget = txt
+end)
+
+Section:NewButton("Kill Target", "rawr", function()
+	SaveConfig()
+	local playerTarget = game.Players:FindFirstChild(eztarget)
+
+	if playerTarget then
+		local startTime = os.clock()
+		local mainRemotes = game.ReplicatedStorage
+		local meleeRemote = mainRemotes['meleeEvent']
+
+		while os.clock() - startTime < 3 do
+			for _, plr in pairs(game:GetService('Players'):GetChildren()) do
+				if plr.Name ~= game.Players.LocalPlayer.Name then
+					meleeRemote:FireServer(plr)
+					teleport(playerTarget)
+				end
+			end
+			wait(0.1)
+		end
+	else
+		warn("Invalid player target:", eztarget)
+	end  
+end)
+
+Section:NewButton("Arrest Target", "rawr", function()
+	SaveConfig()
+	local playerTarget = game.Players:FindFirstChild(eztarget)
+
+	if playerTarget then
+		game.Workspace.Remote.arrest:InvokeServer(v.Character.HumanoidRootPart)
+	else
+		warn("Invalid player target:", eztarget)
+	end
+end)
+
+Section:NewButton("TP to target", "rawr", function()
+	SaveConfig()
+	local playerTarget = game.Players:FindFirstChild(eztarget)
+
+	if playerTarget then
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = playerTarget.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1)
+	else
+		warn("Invalid player target:", eztarget)
+	end
+end)
+
+Section:NewButton("Instant Punch", "rawr", function()
+	SaveConfig()
+	Events = {
+		TeamEvent = workspace.Remote.TeamEvent,
+		ShootEvent = game:GetService("ReplicatedStorage").ShootEvent,
+		loadchar = function()
+			if plr.Team == game.Teams.Inmates then
+				local ohString1 = "Bright orange"
+				workspace.Remote.TeamEvent:FireServer(ohString1)
+			else
+				local ohString1 = "Bright blue"
+				workspace.Remote.TeamEvent:FireServer(ohString1)
+			end
+		end,
+	}
+	mainRemotes = game.ReplicatedStorage meleeRemote = mainRemotes['meleeEvent'] mouse = game.Players.LocalPlayer:GetMouse() punching = false cooldown = false function punch() cooldown = true local part = Instance.new("Part", game.Players.LocalPlayer.Character) part.Transparency = 1 part.Size = Vector3.new(5, 2, 3) part.CanCollide = false local w1 = Instance.new("Weld", part) w1.Part0 = game.Players.LocalPlayer.Character.Torso w1.Part1 = part w1.C1 = CFrame.new(0,0,2) part.Touched:connect(function(hit) if game.Players:FindFirstChild(hit.Parent.Name) then local plr = game.Players:FindFirstChild(hit.Parent.Name) if plr.Name ~= game.Players.LocalPlayer.Name then part:Destroy() for i = 1,100 do meleeRemote:FireServer(plr) end end end end) wait(1) cooldown = false part:Destroy() end mouse.KeyDown:connect(function(key) if cooldown == false then if key:lower() == "f" then punch() end end end)
+end)
+
+Section:NewButton("Get guns", "rawr", function()
+	SaveConfig()
+	local saved = game:GetService("Players").LocalPlayer.Character:GetPrimaryPartCFrame()
+	game:GetService("Players").LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(workspace.Prison_ITEMS.giver["Remington 870"].ITEMPICKUP.Position))
+	for i =1,2 do
+		local ohInstance1 = game:GetService("Workspace").Prison_ITEMS.giver.M9:GetChildren()[6]
+		workspace.Remote.ItemHandler:InvokeServer(ohInstance1)
+		task.spawn(function()
+			for i =1,3 do
+				workspace.Remote.ItemHandler:InvokeServer(ohInstance1)
+			end		
+		end)
+		local ohInstance2 = workspace.Prison_ITEMS.giver["Remington 870"].ITEMPICKUP
+		workspace.Remote.ItemHandler:InvokeServer(ohInstance2)
+		task.spawn(function()
+			for i =1,3 do
+				workspace.Remote.ItemHandler:InvokeServer(ohInstance2)
+			end		
+		end)
+		local ohInstance3 = game:GetService("Workspace").Prison_ITEMS.giver["AK-47"]:GetChildren()[51]
+		wait()
+		game:GetService("Players").LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(game:GetService("Workspace").Prison_ITEMS.giver["AK-47"]:GetChildren()[51].Position+Vector3.new(0,4,0)))
+		workspace.Remote.ItemHandler:InvokeServer(ohInstance3)
+		task.spawn(function()
+			for i =1,3 do
+				workspace.Remote.ItemHandler:InvokeServer(ohInstance3)
+			end		
+		end)
+	end
+	game:GetService("Players").LocalPlayer.Character:SetPrimaryPartCFrame(saved) 
+end)
+
+Section:NewButton("No doors", "rawr", function()
+	SaveConfig()
+	workspace.Prison_Cellblock.doors:Destroy()
+	for i,v in pairs(workspace:GetChildren())do
+		if v.Name == "Doors" then
+			v:Destroy()
+		end
+	end 
+end)
+
+Section:NewButton("Btools", "rawr", function()
+	SaveConfig()
+	local tool1 = Instance.new("HopperBin",game.Players.LocalPlayer.Backpack)
+	local tool2 = Instance.new("HopperBin",game.Players.LocalPlayer.Backpack)
+	local tool3 = Instance.new("HopperBin",game.Players.LocalPlayer.Backpack)
+	local tool4 = Instance.new("HopperBin",game.Players.LocalPlayer.Backpack)
+	local tool5 = Instance.new("HopperBin",game.Players.LocalPlayer.Backpack)
+	tool1.BinType = "Clone"
+	tool2.BinType = "GameTool"
+	tool3.BinType = "Hammer"
+	tool4.BinType = "Script"
+	tool5.BinType = "Grab"
+	Notif("You have received btools.")
+end)
+
+Section:NewButton("Mod equipped gun", "rawr", function()
+	SaveConfig()
+	Events = {
+		TeamEvent = workspace.Remote.TeamEvent,
+		ShootEvent = game:GetService("ReplicatedStorage").ShootEvent,
+		loadchar = function()
+			if plr.Team == game.Teams.Inmates then
+				local ohString1 = "Bright orange"
+				workspace.Remote.TeamEvent:FireServer(ohString1)
+			else
+				local ohString1 = "Bright blue"
+				workspace.Remote.TeamEvent:FireServer(ohString1)
+			end
+		end,
+	}
+	Reload_Guns = {}
+	if plr.Character:FindFirstChildOfClass("Tool") then
+		local Tool = plr.Character:FindFirstChildOfClass("Tool")
+		if not Tool:FindFirstChild("GunStates") then
+			return Notif("Needs to be a gun!")
+		end
+		local cc = require(Tool.GunStates)
+		cc["Damage"] = 9e9
+		cc["FireRate"] = 0.001
+		cc["Range"] = math.huge
+		cc["MaxAmmo"] = math.huge
+		cc["StoredAmmo"] = math.huge
+		cc["AmmoPerClip"] = math.huge
+		cc["CurrentAmmo"] = math.huge
+		if Tool.Name ~= "Remington 870" then
+			cc["Bullets"] = 1
+			cc["AutoFire"] = true
+		end
+		Notif("Modded "..Tool)
+	else
+		Notif("You need to hold the tool you want to mod!")
+	end
+end)
+
+Section:NewButton("TP inside of prison", "rawr", function()
+	SaveConfig()
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(879,99,2377)
+end)
+
+Section:NewButton("TP to criminal base", "rawr", function()
+	SaveConfig()
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-943, 96, 2055)
+end)
+
+Section:NewButton("TP to guard area", "rawr", function()
+	SaveConfig()
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(802,99,2270)
+end)
+
+Section:NewButton("Loop kill all", "rawr", function()
+	SaveConfig()
+	Notif("Not killing? Kill Aura is required to be on.")
+	local players = game:GetService("Players"):GetPlayers()
+	while wait(1) do
+		if #players > 0 then
+			local randomIndex = math.random(1, #players)
+			local randomPlayer = players[randomIndex]
+			if randomPlayer.Character and randomPlayer.Character:FindFirstChild("HumanoidRootPart") then
+				Notif("Killing " .. randomPlayer.Name)
+				game.Players.LocalPlayer.Character.Humanoid.Sit = false
+				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = randomPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1)
+			else
+				print("Selected player has no character or HumanoidRootPart.")
+			end
+		else
+			print("No players in the game.")
+		end
+	end
+end)
+
+Section:NewButton("Godmode", "rawr", function()
+	SaveConfig()
+	repeat task.wait() until char and char:FindFirstChildOfClass("Humanoid")
+	char:FindFirstChildOfClass("Humanoid").BreakJointsOnDeath = false
+	char:FindFirstChildOfClass("Humanoid").Died:Connect(function()
+		refresh()
+	end)
+end)
+
+--Destruction Simulator
+local moneyamt = 0
+local lvlamt = 0
+
+DSection:NewTextBox("Coins", "press enter to confirm num", function(txt)
+	SaveConfig()
+	moneyamt = tonumber(txt) or 0
+end)
+
+DSection:NewTextBox("Level", "press enter to confirm num", function(txt)
+	SaveConfig()
+	lvlamt = tonumber(txt) or 0
+end)
+
+DSection:NewButton("Add Coins", "max: 99,999,999", function()
+	SaveConfig()
+	if moneyamt > 0 then
+		local Event = game:GetService("ReplicatedStorage").Remotes.generateBoost
+		Event:FireServer("Coins", 999999, moneyamt)
+		Notif("Added "..moneyamt.." Coins!")
+	else
+		Notif("Invalid Coins amount!")
+	end
+end)
+
+DSection:NewButton("Add Level", "max: 55", function()
+	SaveConfig()
+	local Amount = lvlamt
+	if Amount and Amount > 0 then
+		local Event = game:GetService("ReplicatedStorage").Remotes.generateBoost
+		local LevelValue = game.Players.LocalPlayer.leaderstats.Level
+		if Amount > LevelValue.Value then
+			local Difference = Amount - LevelValue.Value
+			repeat
+				local FireAmount = math.min(Difference, 15)
+				Event:FireServer("Levels", 480, FireAmount)
+				Difference -= FireAmount
+				wait()
+			until Difference == 0
+		elseif Amount < LevelValue.Value then
+			local Difference = LevelValue.Value - Amount
+			repeat
+				local FireAmount = math.min(Difference, 15)
+				Event:FireServer("Levels", 480, -FireAmount)
+				Difference -= FireAmount
+				wait()
+			until Difference == 0
+		end
+		Notif("Set Level to "..lvlamt.."!")
+	else
+		Notif("Invalid Level amount!")
+	end
+end)
+
+DSection:NewButton("Sell Bricks", "rawr", function()
+	SaveConfig()
+	local Event = game:GetService("ReplicatedStorage").Remotes.sellBricks
+	Event:FireServer()
+	Notif("Sold bricks.")
+end)
+
+function displayInfBackpack()
+	local amnt = game:GetService("Players").LocalPlayer.PlayerGui.MainUI.StatsFrame.Stats.Bricks.amnt
+	local backpackamnt = workspace.IllIlIllIlIlIIIllIll.Backpack.HUD.backpackUI.amnt
+	local newamnt = amnt:Clone()
+	local newamnt2 = backpackamnt:Clone()
+	newamnt.Name = "amount"
+	newamnt2.Name = "amount"
+	newamnt.Text = "inf"
+	newamnt2.Text = "inf"
+	newamnt.Parent = amnt.Parent
+	newamnt2.Parent = backpackamnt.Parent
+	amnt:Destroy()
+	backpackamnt:Destroy()
+end
+
+DSection:NewButton("Get inf backpack", "rawr", function()
+	SaveConfig()
+	while true do
+		local Event = game:GetService("ReplicatedStorage").Remotes.sellBricks
+		Event:FireServer()
+		displayInfBackpack()
+		wait(0.1)
+	end
+end)
+
+DSection:NewToggle("Spam money", "rawr", function(state)
+	SaveConfig()
+	while state do
+		local Event = game:GetService("ReplicatedStorage").Remotes.generateBoost
+		Event:FireServer("Coins", 999999, 99999999)
+		wait(0.1)
+	end
+end)
+
+DSection:NewToggle("Spam sell bricks", "rawr", function(state)
+	SaveConfig()
+	while state do
+		local Event = game:GetService("ReplicatedStorage").Remotes.sellBricks
+		Event:FireServer()
+		wait(0.00001)
+	end
+end)
+
+DSection:NewButton("Spam money 5-10b/sec", "max: 99,999,999", function()
+	SaveConfig()
+	local Event = game:GetService("ReplicatedStorage").Remotes.generateBoost
+	while true do
+		Event:FireServer("Coins", 999999, 99999999)
+		wait(0.1)
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+		while true do
+			Event:FireServer("Coins", 999999, 99999999)
+			wait(0.1)
+		end
+	end
+end)
+
+local areatochange
+DSection:NewTextBox("Area", "press enter to confirm num", function(txt)
+	SaveConfig()
+	areatochange = tonumber(txt) or 0
+end)
+
+DSection:NewButton("Change area", "tells the game ur in # area", function()
+	SaveConfig()
+	local areaevent = game:GetService("ReplicatedStorage").Remotes.areaChanged
+	areaevent:FireServer(areatochange)
+end)
+
+local boosttypeforplr
+local boostdurationforplr = 180
+local boostmultiplierforplr = 2
+
+DSection:NewDropdown("Boost Type", "rawr", {"XP", "Super Jump", "Coin", "Brick", "Speed"}, function(currentOption)
+	SaveConfig()
+	boosttypeforplr = currentOption
+end)
+
+DSection:NewTextBox("Duration of Boost", "Press enter to confirm number", function(txt)
+	SaveConfig()
+	boostdurationforplr = tonumber(txt) or 0
+end)
+
+DSection:NewTextBox("Multiplier of Boost", "Press enter to confirm number", function(txt)
+	SaveConfig()
+	boostmultiplierforplr = tonumber(txt) or 0
+end)
+
+DSection:NewButton("Boost", "rawr", function()
+	SaveConfig()
+	local boostevent = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes") and game:GetService("ReplicatedStorage").Remotes:FindFirstChild("generateBoost")
+
+	if not boostevent then
+		warn("Boost event not found!")
+		return
+	end
+
+	if not boosttypeforplr then
+		warn("No boost type selected!")
+		return
+	end
+
+	local boostMapping = {
+		["Speed"] = "ExtraSpeed",
+		["XP"] = "XPBoost",
+		["Super Jump"] = "SuperJump",
+		["Brick"] = "BrickBoost",
+		["Coin"] = "CoinBoost"
+	}
+
+	local boostKey = boostMapping[boosttypeforplr]
+	if boostKey then
+		boostevent:FireServer(boostKey, boostdurationforplr, boostmultiplierforplr)
+	else
+		warn("Invalid boost type!")
+	end
+end)
+
+--RIVALS
+RSection:NewButton("Slient-Aim", "rawr", function()
+	SaveConfig()
+	loadstring(game:HttpGet(('https://raw.githubusercontent.com/pasteisback/Xploit/refs/heads/main/RivalsSlientAim')))()
+end)
+
+RSection:NewButton("ESP", "rawr", function()
+	SaveConfig()
+	loadstring(game:HttpGet(('https://raw.githubusercontent.com/pasteisback/Xploit/refs/heads/main/ArsenalESP')))()
+end)
+
+RSection:NewButton("Fly", "rawr", function()
+	SaveConfig()
+	Notif("Credits to IY dev(s)")
+	FLY()
+end)
+
+RSection:NewButton("Unfly", "rawr", function()
+	SaveConfig()
+	Notif("Credits to IY dev(s)")
+	Unfly()
+end)
+
+--Arsenal
+ASection:NewButton("Slient-Aim", "rawr", function()
+	SaveConfig()
+	function getplrsname()
+		for i,v in pairs(game:GetChildren()) do
+			if v.ClassName == "Players" then
+				return v.Name
+			end
+		end
+	end
+	local players = getplrsname()
+	local plr = game[players].LocalPlayer
+	coroutine.resume(coroutine.create(function()
+		while  wait(1) do
+			coroutine.resume(coroutine.create(function()
+				for _,v in pairs(game[players]:GetPlayers()) do
+					if v.Name ~= plr.Name and v.Character then
+						v.Character.RightUpperLeg.CanCollide = false
+						v.Character.RightUpperLeg.Transparency = 10
+						v.Character.RightUpperLeg.Size = Vector3.new(13,13,13)
+
+						v.Character.LeftUpperLeg.CanCollide = false
+						v.Character.LeftUpperLeg.Transparency = 10
+						v.Character.LeftUpperLeg.Size = Vector3.new(13,13,13)
+
+						v.Character.HeadHB.CanCollide = false
+						v.Character.HeadHB.Transparency = 10
+						v.Character.HeadHB.Size = Vector3.new(13,13,13)
+
+						v.Character.HumanoidRootPart.CanCollide = false
+						v.Character.HumanoidRootPart.Transparency = 10
+						v.Character.HumanoidRootPart.Size = Vector3.new(13,13,13)
+
+					end
+				end
+			end))
+		end
+	end))
+end)
+
+ASection:NewButton("ESP", "rawr", function()
+	SaveConfig()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/pasteisback/Xploit/refs/heads/main/ArsenalESP"))()
+end)
+
+ASection:NewButton("Mod Recoil", "rawr", function()
+	SaveConfig()
+	local replicationstorage = game.ReplicatedStorage
+
+	while wait(5) do
+
+		for i, v in pairs(replicationstorage.Weapons:GetDescendants()) do
+			if v.Name == "RecoilControl" then
+				v.Value = 0
+			end
+			if v.Name == "MaxSpread" then
+				v.Value = 0
+			end
+
+		end
+	end
+end)
+
+ASection:NewButton("Inf Ammo", "rawr", function()
+	SaveConfig()
+	local replicationstorage = game.ReplicatedStorage
+
+	while wait() do
+		game:GetService("Players").LocalPlayer.PlayerGui.GUI.Client.Variables.ammocount.Value = 999
+		game:GetService("Players").LocalPlayer.PlayerGui.GUI.Client.Variables.ammocount2.Value = 999
+	end
+end)
+
+ASection:NewButton("Mod Fire-Rate", "rawr", function()
+	SaveConfig()
+	local replicationstorage = game.ReplicatedStorage
+
+	while wait(5) do
+
+		for i, v in pairs(replicationstorage.Weapons:GetDescendants()) do
+			if v.Name == "Auto" then
+				v.Value = true
+			end
+			if v.Name == "FireRate" then
+				v.Value = 0.02
+			end
+		end
+
+	end
+end)
+
+--Natural Disaster Survival
+local ringPartsEnabled
+
+local Folder = Instance.new("Folder", Workspace)
+local Part = Instance.new("Part", Folder)
+local Attachment1 = Instance.new("Attachment", Part)
+Part.Anchored = true
+Part.CanCollide = false
+Part.Transparency = 1
+
+if not getgenv().Network then
+	getgenv().Network = {
+		BaseParts = {},
+		Velocity = Vector3.new(14.46262424, 14.46262424, 14.46262424)
+	}
+
+	Network.RetainPart = function(Part)
+		if typeof(Part) == "Instance" and Part:IsA("BasePart") and Part:IsDescendantOf(Workspace) then
+			table.insert(Network.BaseParts, Part)
+			Part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0, 0, 0)
+			Part.CanCollide = false
+		end
+	end
+
+	local function EnablePartControl()
+		LocalPlayer.ReplicationFocus = Workspace
+		RunService.Heartbeat:Connect(function()
+			sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
+			for _, Part in pairs(Network.BaseParts) do
+				if Part:IsDescendantOf(Workspace) then
+					Part.Velocity = Network.Velocity
+				end
+			end
+		end)
+	end
+
+	EnablePartControl()
+end
+
+local function ForcePart(v)
+	if v:IsA("Part") and not v.Anchored and not v.Parent:FindFirstChild("Humanoid") and not v.Parent:FindFirstChild("Head") and v.Name ~= "Handle" then
+		for _, x in next, v:GetChildren() do
+			if x:IsA("BodyAngularVelocity") or x:IsA("BodyForce") or x:IsA("BodyGyro") or x:IsA("BodyPosition") or x:IsA("BodyThrust") or x:IsA("BodyVelocity") or x:IsA("RocketPropulsion") then
+				x:Destroy()
+			end
+		end
+		if v:FindFirstChild("Attachment") then
+			v:FindFirstChild("Attachment"):Destroy()
+		end
+		if v:FindFirstChild("AlignPosition") then
+			v:FindFirstChild("AlignPosition"):Destroy()
+		end
+		if v:FindFirstChild("Torque") then
+			v:FindFirstChild("Torque"):Destroy()
+		end
+		v.CanCollide = false
+		local Torque = Instance.new("Torque", v)
+		Torque.Torque = Vector3.new(100000, 100000, 100000)
+		local AlignPosition = Instance.new("AlignPosition", v)
+		local Attachment2 = Instance.new("Attachment", v)
+		Torque.Attachment0 = Attachment2
+		AlignPosition.MaxForce = 9999999999999999999999999999999
+		AlignPosition.MaxVelocity = math.huge
+		AlignPosition.Responsiveness = 200
+		AlignPosition.Attachment0 = Attachment2
+		AlignPosition.Attachment1 = Attachment1
+	end
+end
+
+local function RetainPart(Part)
+	if Part:IsA("BasePart") and not Part.Anchored and Part:IsDescendantOf(workspace) then
+		if Part.Parent == LocalPlayer.Character or Part:IsDescendantOf(LocalPlayer.Character) then
+			return false
+		end
+
+		Part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0, 0, 0)
+		Part.CanCollide = false
+		return true
+	end
+	return false
+end
+
+local parts = {}
+local function addPart(part)
+	if RetainPart(part) then
+		if not table.find(parts, part) then
+			table.insert(parts, part)
+		end
+	end
+end
+
+local function removePart(part)
+	local index = table.find(parts, part)
+	if index then
+		table.remove(parts, index)
+	end
+end
+
+for _, part in pairs(workspace:GetDescendants()) do
+	addPart(part)
+end
+
+workspace.DescendantAdded:Connect(addPart)
+workspace.DescendantRemoving:Connect(removePart)
+
+RunService.Heartbeat:Connect(function()
+	if not ringPartsEnabled then return end
+
+	local humanoidRootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+	if humanoidRootPart then
+		local tornadoCenter = humanoidRootPart.Position
+		for _, part in pairs(parts) do
+			if part.Parent and not part.Anchored then
+				local pos = part.Position
+				local distance = (Vector3.new(pos.X, tornadoCenter.Y, pos.Z) - tornadoCenter).Magnitude
+				local angle = math.atan2(pos.Z - tornadoCenter.Z, pos.X - tornadoCenter.X)
+				local newAngle = angle + math.rad(config.speed)
+				local targetPos = Vector3.new(
+					tornadoCenter.X + math.cos(newAngle) * math.min(config.radius, distance),
+					tornadoCenter.Y + (config.height * (math.abs(math.sin((pos.Y - tornadoCenter.Y) / config.height)))),
+					tornadoCenter.Z + math.sin(newAngle) * math.min(config.radius, distance)
+				)
+				local directionToTarget = (targetPos - part.Position).unit
+				part.Velocity = directionToTarget * config.strength
+			end
+		end
+	end
+end)
+
+NDSection:NewButton("Get disaster", "rawr", function()
+	SaveConfig()
+	local ndplr = game.Players.LocalPlayer
+	local wsplr = workspace:FindFirstChild(ndplr.Name)
+	local tag
+	if wsplr:FindFirstChild("SurvivalTag") then
+		tag = wsplr.SurvivalTag
+		Notif(tag.Value)
+	else
+		Notif("wait until you are on island")
+	end
+end)
+
+NDSection:NewToggle("Ring Parts", "rawr", function(state)
+	ringPartsEnabled = state
+	SaveConfig()
+	if state then
+		--true
+		ringPartsEnabled = state
+	else
+		--false
+		ringPartsEnabled = state
+	end
+end)
+
+NDSection:NewSlider("Radius of ring parts", "rawr", 500, 0, function(s)
+	config.radius = s
+	SaveConfig()
+end)
+
+NDSection:NewSlider("Height of ring parts", "rawr", 500, 0, function(s)
+	config.height = s
+	SaveConfig()
+end)
+
+NDSection:NewSlider("Speed of ring parts", "rawr", 500, 0, function(s)
+	config.speed = s
+	SaveConfig()
+end)
+
+NDSection:NewSlider("Strength of ring parts", "rawr", 500, 0, function(s)
+	config.strength = s
+	SaveConfig()
+end)
+
+--Fisch
+FischSection:NewLabel("Please join fisch for this to work.")
+FischSection:NewButton("Join fisch", "rawr", function()
+	game:GetService("TeleportService"):Teleport(16732694052, game.Players.LocalPlayer)
+end)
+if game.PlaceId == 16732694052 then
+	local PreloadConstants = {
+		PlaceVersionSupport = 3840,
+		BypassVersion = "V3"
+	}
+
+	local Success, Error = pcall(function()
+		Start = os.clock()
+		local NO_HOOKING = false
+
+		local Version = 1.2
+		local SubVersion = "v1"
+		local Debugging = true
+		local Title = "Moon Fisch"
+
+		local HttpService = game:GetService("HttpService")
+		local Players = game:GetService("Players")
+		local RunService = game:GetService("RunService")
+		local ReplicatedStorage = game:GetService("ReplicatedStorage")
+		local TweenService = game:GetService("TweenService")
+		local VirtualInputManager = Instance.new("VirtualInputManager")
+		local VirtualUser = game:GetService("VirtualUser")
+		local StarterGui = game:GetService("StarterGui")
+		local GuiService = game:GetService("GuiService")
+		local CollectionService = game:GetService("CollectionService")
+		local UserInputService = game:GetService("UserInputService")
+		local Lighting = game:GetService("Lighting")
+		local VeryImportantPart = Instance.new("Part")
+
+		if game.PlaceVersion > PreloadConstants.PlaceVersionSupport then
+			Players.LocalPlayer:Kick("PlaceVersionTooHigh | " .. game.PlaceVersion .. " > " .. PreloadConstants.PlaceVersionSupport)
+		end
+
+		local Toasts = loadstring(game:HttpGet("https://raw.githubusercontent.com/pasteisback/MoonHubFischSrc/refs/heads/main/src.luau"))()
+
+		do
+			VeryImportantPart.Name = "SpawnBox"
+			local prio = Instance.new("IntValue", VeryImportantPart)
+			prio.Name = "priority"
+			prio.Value = 10
+			local name = Instance.new("StringValue", VeryImportantPart)
+			name.Name = "zonename"
+			name.Value = "???"
+		end
+
+		local Camera = workspace.CurrentCamera
+
+		local ZoneFishOrigin = nil
+
+		local PreAutoloadConfig = true
+
+		local State = {
+			GettingMeteor = false,
+			OwnedBoats = {},
+			LastToolReset = os.clock(),
+			ToolResetCooldown = 5
+		}
+
+		local GlobalStorage = {
+			PeakZones = {
+				["Overgrowth Caves"] = true,
+				["Frigid Cavern"] = true,
+				["Cryogenic Canal"] = true,
+				["Glacial Grotto"] = true
+			}
+		}
+
+		local LocalPlayer = Players.LocalPlayer
+		local Unloaded = false
+		local CurrentTool: Tool?
+
+		if not (hookfunction and hookmetamethod) then
+			hookfunction = function(...) end
+			hookmetamethod = function(...) end
+			NO_HOOKING = true
+		end
+
+		if not getconnections then
+			getconnections = function(...) end
+		end
+
+		if not setthreadidentity then
+			setthreadidentity = function(...) end
+		end
+
+		local function Unimplemented()
+			return warn("This feature is not implemented yet")
+		end
+
+		local function dbgprint(...)
+			if Debugging then
+				print("[Debugging]", ...)
+			end
+		end
+
+		local function dbgwarn(...)
+			if Debugging then
+				warn("[Debugging]", ...)
+			end
+		end
+
+		local function WaitForTable(Root: Instance, InstancePath: { string }, Timeout: number?)
+			local Instance = Root
+			for i, v in pairs(InstancePath) do
+				Instance = Instance:WaitForChild(v, Timeout)
+			end
+			return Instance
+		end
+
+		local function EnsureStream(Root, InstancePath, Position, Timeout)
+			LocalPlayer:RequestStreamAroundAsync(Position, Timeout)
+			return WaitForTable(Root, InstancePath, Timeout)
+		end
+
+		local function EnsureInstance(Instance: Instance?): boolean
+			return (Instance and Instance:IsDescendantOf(game))
+		end
+
+		local function _round(num, numDecimalPlaces): number
+			local mult = 10 ^ (numDecimalPlaces or 0)
+			return math.floor(num * mult + 0.5) / mult
+		end
+
+		local Configuration = {
+			CheckSafeRange = 50,
+		}
+
+		local Remotes = {
+			ReelFinished = ReplicatedStorage.events:WaitForChild("reelfinished "),
+			SellAll = ReplicatedStorage.events:WaitForChild("SellAll"),
+			Power = EnsureStream(workspace, { "world", "npcs", "Merlin", "Merlin", "power" }, Vector3.new(-930, 226, -993), 5),
+			Luck = EnsureStream(workspace, { "world", "npcs", "Merlin", "Merlin", "luck" }, Vector3.new(-930, 226, -993), 5),
+		}
+
+		local Interface = {
+			FishRadar = ReplicatedStorage.resources.items.items["Fish Radar"]["Fish Radar"],
+			TeleportSpots = WaitForTable(workspace, { "world", "spawns", "TpSpots" }),
+			Inventory = WaitForTable(LocalPlayer.PlayerGui, { "hud", "safezone", "backpack" }),
+			MeteorItems = workspace:WaitForChild("MeteorItems"),
+			PlayerData = ReplicatedStorage:WaitForChild("playerstats"):WaitForChild(LocalPlayer.Name),
+			NPCs = workspace:WaitForChild("world"):WaitForChild("npcs"),
+			BoatModels = WaitForTable(ReplicatedStorage, { "resources", "replicated", "instances", "vessels" }),
+			Active = workspace:WaitForChild("active"),
+			ActiveBoats = workspace:WaitForChild("active"):WaitForChild("boats"),
+		}
+
+		local Collection = {}
+		local OnUnload = Instance.new("BindableEvent")
+		local function Collect(Item: RBXScriptConnection | thread)
+			table.insert(Collection, Item)
+		end
+
+		local fischconfig = {
+			AutoReelValue = false,
+			AutoShakeValue = false,
+			InfiniteOxygenValue = false,
+			AutoSellValue = false,
+			PerfectReelValue = false,
+			PerfectCastValue = false,
+			InstaReelValue = false,
+			AntiAFKValue = false,
+			InstaBobValue = false
+		}
+
+		local function SaveFischConfig()
+			local configStr = HttpService:JSONEncode(fischconfig)
+			writefile("MoonFisch.txt", configStr)
+		end
+
+		local function LoadFischConfig()
+			if isfile("MoonFisch.txt") then
+				local configStr = readfile("MoonFisch.txt")
+				fischconfig = HttpService:JSONDecode(configStr)
+			end
+		end
+
+		local Utils = {}
+		do
+
+			function Utils.CountInstances(Parent : Instance, Name : string) : number
+				local Count = 0
+				for _, Instance in next, Parent:GetChildren() do
+					if Instance.Name == Name then
+						Count += 1
+					end
+				end
+				return Count
+			end
+
+			function Utils:BreakVelocity()
+				if LocalPlayer.Character then
+					task.spawn(function()
+						for i = 20, 1, -1 do
+							RunService.Heartbeat:Wait()
+							for _, Part in next, LocalPlayer.Character:GetDescendants() do
+								if Part:IsA("BasePart") then
+									Part.Velocity = Vector3.new(0, 0, 0)
+									Part.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+								end
+							end
+						end
+					end)
+				end
+			end
+
+			function Utils.ToggleLocationCC(Value: boolean)
+				local LocationCC = Lighting:FindFirstChild("location")
+
+				if LocationCC then
+					LocationCC.Enabled = Value
+				end
+			end
+
+			function Utils.GameNotify(Message: string)
+				ReplicatedStorage.events.anno_localthoughtbig:Fire(Message, nil, nil, nil, "Exotic")
+			end
+
+			function Utils.GetCharacters()
+				local Characters = {}
+
+				for _, Player: Player in next, Players:GetPlayers() do
+					if Player.Character then
+						table.insert(Characters, Player.Character)
+					end
+				end
+
+				return Characters
+			end
+
+			function Utils.Net(Type : string, Index : string)
+				return ReplicatedStorage.packages.Net:FindFirstChild(Type .. "/" .. Index)
+			end
+
+			function Utils.Character()
+				return LocalPlayer.Character
+			end
+
+			function Utils.Humanoid(): Humanoid?
+				local Character = Utils.Character()
+
+				if Character then
+					return Character:FindFirstChildOfClass("Humanoid")
+				end
+
+				return nil
+			end
+
+			function Utils.CastTo(A: Vector3, B: Vector3, Params: RaycastParams): RaycastResult?
+				local Direction = (B - A)
+				return workspace:Raycast(A, Direction, Params)
+			end
+
+			function Utils.SafePosition(Position: Vector3, Range: number)
+				local Characters = Utils.GetCharacters()
+				local RayParams = RaycastParams.new()
+				RayParams.FilterType = Enum.RaycastFilterType.Exclude
+				RayParams.RespectCanCollide = true
+				RayParams.FilterDescendantsInstances = Characters
+
+				for _, Character in next, Characters do
+					local Head = Character:FindFirstChild("Head")
+					local Pivot = Character:GetPivot()
+
+					if Head then
+						local Raycast = Utils.CastTo(Position, Head.Position, RayParams)
+
+						if Raycast then
+							return false
+						end
+					end
+
+					if Pivot then
+						local Distance = (Position - Pivot.Position).Magnitude * 0.5
+
+						if Distance <= Range then
+							return false
+						end
+					end
+				end
+
+				return true
+			end
+
+			function Utils.TP(Target: Vector3 | CFrame | PVInstance, CheckSafe: boolean?): boolean
+				local Pivot: CFrame
+
+				if typeof(Target) == "CFrame" then
+					Pivot = Target
+				elseif typeof(Target) == "Vector3" then
+					Pivot = CFrame.new(Target)
+				elseif typeof(Target) == "PVInstance" then
+					Pivot = Target:GetPivot()
+				elseif typeof(Target) == "BasePart" then
+					Pivot = Target:GetPivot()
+				elseif typeof(Target) == "Model" then
+					Pivot = Target:GetPivot()
+				end
+
+				if CheckSafe then
+					if not Utils.SafePosition(Pivot.Position, Configuration.CheckSafeRange) then
+						return false
+					end
+				end
+
+				local Character = Utils.Character()
+				if Character then
+					Character:PivotTo(Pivot)
+					return true
+				end
+
+				return false
+			end
+
+			function Utils.EliminateVelocity(Model: Model): nil
+				for _, Part in next, Model:GetDescendants() do
+					if Part:IsA("BasePart") then
+						Part.Velocity = Vector3.new(0, 0, 0)
+						Part.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+					end
+				end
+				return nil
+			end
+
+			function Utils.GenericToast(Duration: number, Message: string, CustomTitle: string?)
+				local MessageTitle = CustomTitle or Title
+
+				Toasts.CreateToast(
+					HttpService:GenerateGUID(false),
+					MessageTitle,
+					Message,
+					"rbxassetid://18259985431",
+					Duration
+				)
+			end
+
+			function Utils.GetUsernameMatch(PartialName: string): Player?
+				local BestMatch = nil
+				local BestMatchLength = 0
+
+				for _, Player in next, Players:GetPlayers() do
+					if string.find(Player.Name:lower(), PartialName:lower()) then
+						if #Player.Name > BestMatchLength then
+							BestMatch = Player
+							BestMatchLength = #Player.Name
+						end
+					end
+				end
+
+				return BestMatch
+			end
+		end
+
+		function Utils.CharacterChildRemoved(Child: Instance)
+			if Child:IsA("Tool") then
+				CurrentTool = nil
+			end
+		end
+
+		function Utils.Capitalize(String: string): string
+			return string.upper(string.sub(String, 1, 1)) .. string.sub(String, 2)
+		end
+
+		function Utils.GetNPC(Type: string, Single: boolean?): Model | { Model } | nil
+			local function GetNPCType(NPC: Model) -- i hate this function so much
+				local NPCType = "Unknown"
+
+				if NPC:FindFirstChild("shipwright") then
+					NPCType = "Shipwright"
+				elseif NPC:FindFirstChild("merchant") then
+					NPCType = "Merchant"
+				elseif NPC:FindFirstChild("angler") then
+					NPCType = "Angler"
+				end
+
+				return NPCType
+			end
+
+			local NPCs = Interface.NPCs:GetChildren()
+			local Results = {}
+
+			for _, Character in next, NPCs do
+				local NPCType = GetNPCType(Character)
+
+				if NPCType == Type then
+					if Single then
+						return Character
+					else
+						table.insert(Results, Character)
+					end
+				end
+			end
+
+			return nil
+		end
+		local TeleportLocations = {}
+		local TeleportLocations_DropDownValues = {}
+
+		for _, Location in next, Interface.TeleportSpots:GetChildren() do
+			TeleportLocations[Utils.Capitalize(Location.Name)] = Location.Position + Vector3.new(0, 6, 0)
+		end
+
+		for Name, Position in next, TeleportLocations do
+			table.insert(TeleportLocations_DropDownValues, Name)
+		end
+
+		table.sort(TeleportLocations_DropDownValues)
+
+		local FishingZones = {}
+
+		for _, Zone in next, workspace:WaitForChild("zones"):WaitForChild("fishing"):GetChildren() do
+			if not FishingZones[Zone.Name] then
+				FishingZones[Zone.Name] = Zone
+			end
+		end
+
+		local FishingZones_DropDownValues = {}
+
+		for Name, Zone in next, FishingZones do
+			table.insert(FishingZones_DropDownValues, Name)
+		end
+
+		local function ResetTool()
+			if CurrentTool then
+				local ToolCache = LocalPlayer.Character:FindFirstChildOfClass("Tool")
+				if CurrentTool then
+					if State.LastToolReset + State.ToolResetCooldown < os.clock() then
+						State.LastToolReset = os.clock()
+						LocalPlayer.Character.Humanoid:UnequipTools()
+						task.wait()
+						ToolCache.Parent = LocalPlayer.Character
+					end
+				end
+			end
+		end
+
+		do
+			local URL = "https://raw.githubusercontent.com/pasteisback/MoonHubFischhookfunc/refs/heads/main/ac%20bypass.lua"
+
+			local Success, Error = pcall(function()
+				return loadstring(game:HttpGet(URL))()
+			end)
+
+			if not Success then
+				LocalPlayer:Kick("Anti-Cheat disabler failed to load! What happened: " .. Error)
+			end
+		end
+
+		---------------------------
+
+
+
+
+
+
+		FischSection:NewToggle("Perfect Cast", "rawr", function(state)
+			fischconfig.PerfectCastValue = state
+			state = fischconfig.PerfectCastValue
+			SaveFischConfig()
+		end)
+
+		FischSection:NewToggle("Insta-Bob", "rawr", function(state)
+			fischconfig.InstaBobValue = state
+			state = fischconfig.InstaBobValue
+			SaveFischConfig()
+		end)
+
+		FischSection:NewToggle("Auto-Reel", "rawr", function(state)
+			fischconfig.AutoReelValue = state
+			state = fischconfig.AutoReelValue
+			SaveFischConfig()
+		end)
+
+		FischSection:NewToggle("Insta-Reel", "rawr", function(state)
+			fischconfig.InstaReelValue = state
+			state = fischconfig.InstaReelValue
+			SaveFischConfig()
+		end)
+
+		FischSection:NewToggle("Perfect Reel", "rawr", function(state)
+			fischconfig.PerfectReelValue = state
+			state = fischconfig.PerfectReelValue
+			SaveFischConfig()
+		end)
+
+		FischSection:NewToggle("Auto Shake", "rawr", function(state)
+			fischconfig.AutoShakeValue = state
+			state = fischconfig.AutoShakeValue
+			SaveFischConfig()
+		end)
+
+		FischSection:NewToggle("Auto Sell", "rawr", function(state)
+			fischconfig.AutoSellValue = state
+			state = fischconfig.AutoSellValue
+			SaveFischConfig()
+		end)
+
+		FischSection:NewToggle("Infinite Oxygen", "rawr", function(state)
+			fischconfig.InfiniteOxygenValue = state
+			state = fischconfig.InfiniteOxygenValue
+			local FakeTank = Instance.new("Glue")
+			FakeTank.Name = "DivingTank"
+			FakeTank:SetAttribute("Tier", 9e9)
+			SaveFischConfig()
+			if state then
+				FakeTank.Parent = LocalPlayer.Character
+			else
+				FakeTank.Parent = nil
+			end
+		end)
+
+		setthreadidentity(7)
+
+		FischSection:NewToggle("Anti AFK", "rawr", function(state)
+			fischconfig.AntiAFKValue = state
+			state = fischconfig.AntiAFKValue
+			SaveFischConfig()
+		end)
+
+		Collect(workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+			Camera = workspace.CurrentCamera
+		end))
+
+		if not NO_HOOKING then
+			local oldindex
+			oldindex = hookmetamethod(game, "__index", function(...)
+				if not Unloaded then
+					if not checkcaller() then
+						local Args = { ... } -- i forgot argguard wasnt a thing anymore
+						local self, key = Args[1], Args[2]
+
+						if self == Interface.Inventory and key == "Visible" then
+							local callingscript = getcallingscript()
+
+							if callingscript and (not game.IsDescendantOf(callingscript, Interface.Inventory)) then
+								return true -- for some reason when the backpack isn't visible it disables the menu buttons
+							end
+						end
+					end
+				end
+
+				return oldindex(...)
+			end)
+
+			local oldnamecall
+			oldnamecall = hookmetamethod(game, "__namecall", function(...)
+				if not Unloaded then
+					if not checkcaller() then
+						local Method = getnamecallmethod()
+
+						local Args = { ... }
+						local self = table.remove(Args, 1)
+
+						if Method == "FireServer" then
+							if self == Remotes.ReelFinished then
+								if fischconfig.PerfectReelValue then
+									Args[1] = 100 -- Reel percentage
+									Args[2] = true -- If the reel was perfect
+								end
+							elseif tostring(self) == "cast" then -- ultra detectable but i dont care because im sigma.
+								if fischconfig.PerfectCastValue then
+									Args[1] = 100 -- Cast percentage
+								end
+							end
+
+							return oldnamecall(self, unpack(Args))
+						end
+					end
+				end
+
+				return oldnamecall(...)
+			end)
+		end
+
+		local ShopUpdateCoroutine = coroutine.create(function()
+			while task.wait(1) do
+				if fischconfig.AutoSellValue then
+					Remotes.SellAll:InvokeServer()
+				end
+			end
+		end)
+
+		local AutoClickCoroutine = coroutine.create(function()
+			function Utils.MountShakeUI(ShakeUI: ScreenGui)
+				local SafeZone: Frame? = ShakeUI:WaitForChild("safezone", 5) :: Frame?
+
+				local function HandleButton(Button: ImageButton)
+					Button.Selectable = true
+
+					if EnsureInstance(Button) then
+						GuiService.SelectedObject = Button
+					end
+				end
+
+				if not SafeZone then
+					dbgwarn("Unable to mount shake UI.")
+					return
+				end
+
+				if fischconfig.AutoShakeValue then
+					local Connection = SafeZone.ChildAdded:Connect(function(Child)
+						if Child:IsA("ImageButton") then
+							local Done = false
+
+							task.spawn(function()
+								repeat
+									RunService.RenderStepped:Wait()
+									HandleButton(Child)
+								until Done
+							end)
+
+							task.spawn(function()
+								repeat
+									RunService.RenderStepped:Wait()
+								until (not Child) or (not Child:IsDescendantOf(SafeZone))
+								Done = true
+							end)
+						end
+					end)
+
+					repeat
+						RunService.RenderStepped:Wait()
+						VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
+						VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
+						RunService.RenderStepped:Wait()
+					until not SafeZone:IsDescendantOf(LocalPlayer.PlayerGui)
+					Connection:Disconnect()
+					GuiService.SelectedObject = nil
+				end
+			end
+
+			Collect(LocalPlayer.PlayerGui.ChildAdded:Connect(function(Child: Instance)
+				if Child.Name == "shakeui" and Child:IsA("ScreenGui") then
+					Utils.MountShakeUI(Child)
+				end
+			end))
+		end)
+
+		local AutoReelCoroutine = coroutine.create(function()
+			while true do
+				RunService.RenderStepped:Wait()
+
+				local ReelUI: ScreenGui = LocalPlayer.PlayerGui:FindFirstChild("reel")
+
+				if not ReelUI then
+					continue
+				end
+
+				if fischconfig.InstaReelValue then
+					local Bar = ReelUI:FindFirstChild("bar")
+
+					if Bar then
+						local ReelScript = Bar:FindFirstChild("reel")
+						if ReelScript and ReelScript.Enabled == true then
+							Remotes.ReelFinished:FireServer(100, fischconfig.PerfectReelValue)
+						end
+					end
+				elseif fischconfig.AutoReelValue then
+					local Bar = ReelUI:FindFirstChild("bar")
+
+					if not Bar then
+						continue
+					end
+
+					local PlayerBar: Frame = Bar:FindFirstChild("playerbar")
+					local TargetBar: Frame = Bar:FindFirstChild("fish")
+
+					while Bar and ReelUI:IsDescendantOf(LocalPlayer.PlayerGui) do
+						RunService.RenderStepped:Wait()
+						local UnfilteredTargetPosition = PlayerBar.Position:Lerp(TargetBar.Position, 0.7)
+						local TargetPosition = UDim2.fromScale(
+							math.clamp(UnfilteredTargetPosition.X.Scale, 0.15, 0.85),
+							UnfilteredTargetPosition.Y.Scale
+						)
+
+						PlayerBar.Position = TargetPosition
+					end
+				end
+			end
+		end)
+		Collect(LocalPlayer.Idled:Connect(function()
+			if fischconfig.AntiAFKValue then
+				VirtualUser:CaptureController()
+				VirtualUser:ClickButton2(Vector2.new())
+			end
+		end))
+		Collect(RunService.PostSimulation:Connect(function()
+			if fischconfig.InstaBobValue then
+				if CurrentTool then
+					local Bobber = CurrentTool:FindFirstChild("bobber")
+					if Bobber then
+						local Params = RaycastParams.new()
+
+						Params.FilterType = Enum.RaycastFilterType.Include
+						Params.FilterDescendantsInstances = { workspace.Terrain }
+
+						local RaycastResult = workspace:Raycast(Bobber.Position, -Vector3.yAxis * 100, Params)
+
+						if RaycastResult then
+							if RaycastResult.Instance:IsA("Terrain") then
+								Bobber:PivotTo(CFrame.new(RaycastResult.Position))
+							end
+						end
+					end
+				end
+			end
+		end))
+		coroutine.resume(AutoClickCoroutine)
+		coroutine.resume(AutoReelCoroutine)
+		coroutine.resume(ShopUpdateCoroutine)
+		Collect(AutoClickCoroutine)
+		Collect(AutoReelCoroutine)
+		Collect(ShopUpdateCoroutine)
+		LoadFischConfig()
+		Utils.GameNotify("Moon Hub Injected. dsc.gg/moonexec")
+	end)
+	if not Success then
+		warn("Moon fisch failed to load:", Error)
+	end
+end
+
+--Settings
+SetsSection:NewDropdown("Moon Hub Theme", "rawr", {"Ocean", "LightTheme", "MoonTheme", "DarkTheme", "GrapeTheme", "BloodTheme", "Midnight", "Sentinel", "Synapse"}, function(currentOption)
+	Notif("Changing theme...", 5)
+	config.theme = currentOption
+	SaveConfig()
+	wait()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/pasteisback/MoonScripts/refs/heads/main/MoonHub.lua"))()
+	Library:DestroyUI()
+end)
+
+local keybind = Enum.KeyCode[config.bind] or Enum.KeyCode.RightShift
+SetsSection:NewKeybind("Menu Bind", "rawr", keybind, function()
+	Library:ToggleUI()
+	SaveConfig()
+end)
+
+SetsSection:NewButton("Reset Config", "rawr", function()
+	writefile("MoonConfig.txt", '{"radius":50,"bind":"RightShift","height":100,"theme":"Ocean","strength":1000,"speed":10}')
+	writefile("MoonFisch.txt", '{"AutoSellValue":false,"AntiAFKValue":false,"InfiniteOxygenValue":false,"AutoShakeValue":false,"AutoReelValue":false,"InstaBobValue":false,"InstaReelValue":false,"PerfectCastValue":false,"PerfectReelValue":false}')
+	loadConfig()
+end)
+
+SaveConfig()
