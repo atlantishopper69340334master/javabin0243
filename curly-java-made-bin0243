@@ -1,7 +1,15 @@
 --Moon | Universal
+--skids kys
+--SKIDS HERES A MESSAGES FOR YOU!! your nothing in life, fucking discord mods, honey bun eater nigger, fuck yourself, furry, femboy, you goon to femboy porn, roblox rule34 loser
+--, i hope your entire life dies, i hope you fall into a deep state of depression, honestly no one loves you, i will find you and kill you, i will shoot you with a loaded shotgun nigger
+--, i will kill your siblings, pets, and parents, i will fucking beat the living shit out of you, js fuck you
+--SKIDS IF YOU SADLY HAVENT STABBED A KNIFE IN YOUR CHEST YET, READ THIS, alright fucking whore bastard your still here.. please just take a sharp knife and stab your chest, ITS NOT HARD NIGGER RETARD WHORE
+--SKIDS, FEMBOYS, LGBTQ+ RETARDS, FURRYS, ETC GO FUCKING STAB A KNIFE IN YOUR CHEST STUPID BASTARD I HOPE YOU DIE RETARDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD FUCK YOUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
+local TeleportService = game:GetService("TeleportService")
 local MarketplaceService = game:GetService("MarketplaceService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
 local Players = game:GetService("Players")
 local plr = Players.LocalPlayer
@@ -9,8 +17,13 @@ local char = plr.Character or plr.CharacterAdded:Wait()
 local Workspace = game:GetService("Workspace")
 local LocalPlayer = Players.LocalPlayer
 local HttpService = game:GetService("HttpService")
+local Mouse = LocalPlayer:GetMouse()
+local mouse = Mouse
 
 local humanoidRootPart = char:WaitForChild("HumanoidRootPart")
+
+local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
+queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
 
 local config = {
 	radius = 50,
@@ -44,10 +57,20 @@ local UTab = Window:NewTab("Universal 🎯")
 local USection = UTab:NewSection("Universal 🎯")
 local Tab = Window:NewTab("Prison Life ⛓️‍💥")
 local Section = Tab:NewSection("Prison Life ⛓️‍💥")
-local DTab = Window:NewTab("Destruction Simulator 💥")
-local DSection = DTab:NewSection("Destruction Simulator 💥")
+local DTab = Window:NewTab("Destruction Sim 💥")
+local DSection = DTab:NewSection("Destruction Sim 💥")
 local RTab = Window:NewTab("Rivals ⚔️")
 local RSection = RTab:NewSection("Rivals ⚔️")
+local Sh1Tab = Window:NewTab("Sharkbite 1 🦈")
+local Sh1Section = Sh1Tab:NewSection("Sharkbite 1 🦈")
+local FGSTab = Window:NewTab("Field Goal Sim 🏈")
+local FGSSection = FGSTab:NewSection("Field Goal Sim 🏈")
+local SlbTab = Window:NewTab("Slap battles 🤚")
+local SlbSection = SlbTab:NewSection("Slap battles 🤚")
+local BGSTab = Window:NewTab("Bubble Gum Sim 🧋")
+local BGSSection = BGSTab:NewSection("Bubble Gum Sim 🧋")
+local BWTab = Window:NewTab("Bedwars ⚔️")
+local BWSection = BWTab:NewSection("Bedwars ⚔️")
 local FischTab = Window:NewTab("Fisch 🐟")
 local FischSection = FischTab:NewSection("Fisch 🐟")
 local ATab = Window:NewTab("Arsenal 🔫")
@@ -57,25 +80,26 @@ local NDSection = NDTab:NewSection("Natural Disasters 🌪️")
 local SetsTab = Window:NewTab("Settings ⚙️")
 local SetsSection = SetsTab:NewSection("Settings ⚙️")
 
-local Toggle = false
-local ToggleKey = Enum.UserInputType.MouseButton2
-local currentTarget = nil
-local aimbotEnabled = false
-local toggleState = false
 local debounce = false
-local lockPart = "Head"
 local teamCheck = false
-local fov = 140
-local smoothing = 1
-local predictionFactor = 0.01
-local highlightEnabled = true
+local deadCheck = false
+local wallCheck = false
+local AimlockEnabled = false
+local Smoothness = 10
+local aimlockTargetingPart = "Head"
+local keybindtypeaimlock = "Hold"
+local aimlockKeybind = Enum.UserInputType.MouseButton2
+local aimlockTOGGLE = false
+local presssingaimlock = false
+local trigbotTarget = nil
+local triggerEnabled = false
 
 local FOVring = Drawing.new("Circle")
 FOVring.Visible = false
 FOVring.Thickness = 1
-FOVring.Radius = fov
+FOVring.Radius = 140
 FOVring.Transparency = 0.8
-FOVring.Color = Color3.fromRGB(255, 255, 255)
+FOVring.Color = Color3.fromRGB(255,255,255)
 FOVring.Position = workspace.CurrentCamera.ViewportSize / 2
 
 function getpos()
@@ -95,9 +119,108 @@ function MoveTo(Pos,t)
 	end
 end
 
-function getRoot(char)
-	local rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
-	return rootPart
+local function GetNearestPlayer()
+	local closestPlayer = nil
+	local shortestDistance = math.huge
+
+	for _, player in pairs(Players:GetPlayers()) do
+		if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Head") then
+			local Head = player.Character.Head
+			local HeadPosition, onScreen = workspace.CurrentCamera:WorldToScreenPoint(Head.Position)
+
+			if onScreen then
+				local distance = (Vector2.new(Mouse.X, Mouse.Y) - Vector2.new(HeadPosition.X, HeadPosition.Y)).Magnitude
+				if distance < shortestDistance then
+					shortestDistance = distance
+					closestPlayer = Head
+				end
+			end
+		end
+	end
+
+	return closestPlayer
+end
+
+local function isPlayerVisibleFromESP(targetPart)
+	local camera = workspace.CurrentCamera
+	local origin = camera.CFrame.Position
+
+	local targetPosition = targetPart.Position
+
+	if aimlockTargetingPart == "Head" then
+		if targetPart.Parent:FindFirstChild("Head") then
+			targetPosition = targetPart.Parent.Head.Position
+		else
+		end
+	elseif targetPart.Parent:FindFirstChild("HumanoidRootPart") then
+		targetPosition = targetPart.Parent.HumanoidRootPart.Position
+	else
+	end
+
+	local direction = (targetPosition - origin).unit * 500
+
+
+	local raycastParams = RaycastParams.new()
+	raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+	raycastParams.FilterDescendantsInstances = {LocalPlayer.Character, targetPart.Parent}
+
+	local result = workspace:Raycast(origin, direction, raycastParams)
+
+	return result == nil or (result.Instance and result.Instance:IsDescendantOf(targetPart.Parent))
+end
+
+local function RenderStepForAimlocking()
+	if AimlockEnabled and presssingaimlock then
+		local TargetHead = GetNearestPlayer()
+		if TargetHead then
+			local TargetPos = workspace.CurrentCamera:WorldToScreenPoint(TargetHead.Position)
+			local AimPosition = Vector2.new(TargetPos.X, TargetPos.Y)
+
+			if wallCheck and not isPlayerVisibleFromESP(TargetHead) then
+				return
+			end
+
+			if teamCheck then
+				local TargetPlayer = Players:GetPlayerFromCharacter(TargetHead.Parent)
+				if TargetPlayer and TargetPlayer.TeamColor == LocalPlayer.TeamColor then
+					return
+				end
+			end
+
+			if deadCheck then
+				local TargetHumanoid = TargetHead.Parent:FindFirstChild("Humanoid")
+				if TargetHumanoid and TargetHumanoid.Health <= 0 then
+					return
+				end
+			end
+
+			mousemoverel((AimPosition.X - Mouse.X) / Smoothness, (AimPosition.Y - Mouse.Y) / Smoothness)
+		end
+	end
+end
+
+function turnonaimbot()
+	AimlockEnabled = true
+end
+
+function turnoffaimbot()
+	AimlockEnabled = false
+end
+
+local function getTorso(char)
+	if char and char:FindFirstChild("HumanoidRootPart") then
+		return char.HumanoidRootPart
+	elseif char and char:FindFirstChild("Torso") then
+		return char.Torso
+	end
+	return nil
+end
+
+local function getRoot(char)
+	if char and char:FindFirstChild("HumanoidRootPart") then
+		return char.HumanoidRootPart
+	end
+	return nil
 end
 
 function refresh(Pos)
@@ -135,30 +258,49 @@ function r15(plr)
 	end
 end
 
-local function getClosest(cframe)
-	local ray = Ray.new(cframe.Position, cframe.LookVector).Unit
-	local target = nil
-	local mag = math.huge
-	local screenCenter = workspace.CurrentCamera.ViewportSize / 2
+local function canTriggerBotBeActive(player)
+	local character = player.Character
+	if not character then return false end
 
-	for i, v in pairs(Players:GetPlayers()) do
-		if v.Character and v.Character:FindFirstChild(lockPart) and v.Character:FindFirstChild("Humanoid") and v.Character:FindFirstChild("HumanoidRootPart") and v ~= Players.LocalPlayer and (v.Team ~= Players.LocalPlayer.Team or (not teamCheck)) then
-			local screenPoint, onScreen = workspace.CurrentCamera:WorldToViewportPoint(v.Character[lockPart].Position)
-			local distanceFromCenter = (Vector2.new(screenPoint.X, screenPoint.Y) - screenCenter).Magnitude
+	local head = character:FindFirstChild("Head")
+	if not head then return false end
 
-			if onScreen and distanceFromCenter <= fov then
-				local magBuf = (v.Character[lockPart].Position - ray:ClosestPoint(v.Character[lockPart].Position)).Magnitude
+	local origin = mouse.UnitRay.Origin
+	local direction = (head.Position - origin).Unit
+	local distance = (head.Position - origin).Magnitude
 
-				if magBuf < mag then
-					mag = magBuf
-					target = v
-				end
-			end
-		end
+	local raycastParams = RaycastParams.new()
+	raycastParams.FilterDescendantsInstances = {plr.Character}
+	raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+
+	local raycastResult = workspace:Raycast(origin, direction * distance, raycastParams)
+
+	if raycastResult and raycastResult.Instance:IsDescendantOf(character) then
+		return true
 	end
 
-	return target
+	return false
 end
+
+mouse.Move:Connect(function()
+	if not triggerEnabled then
+		trigbotTarget = nil
+		return
+	end
+
+	local bottarget = mouse.Target
+	local botplayer = nil
+
+	if bottarget and bottarget.Parent and bottarget.Parent:IsA("Model") then
+		botplayer = Players:GetPlayerFromCharacter(bottarget.Parent)
+	end
+
+	if botplayer and botplayer ~= plr and canTriggerBotBeActive(botplayer) then
+		trigbotTarget = botplayer
+	else
+		trigbotTarget = nil
+	end
+end)
 
 function turnOnKAforseconds(seconds)
 	local startTime = os.clock()
@@ -180,42 +322,57 @@ function teleport(target)
 	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1)
 end
 
-local function updateFOVRing()
-	FOVring.Position = workspace.CurrentCamera.ViewportSize / 2
-end
+local bypassingmsg = nil
 
-local function highlightTarget(target)
-	if highlightEnabled and target and target.Character then
-		local highlight = Instance.new("Highlight")
-		highlight.Adornee = target.Character
-		highlight.FillColor = Color3.fromRGB(255, 128, 128)
-		highlight.OutlineColor = Color3.fromRGB(255, 0, 0)
-		highlight.Parent = target.Character
+local function sending()
+	local TextChatService = game:GetService("TextChatService")
+	local Players = game:GetService("Players")
+
+	local function sendMessage(msg)
+		local player = Players.LocalPlayer
+		if TextChatService.ChatInputBarConfiguration.TargetTextChannel then
+			TextChatService.ChatInputBarConfiguration.TargetTextChannel:SendAsync(msg)
+		else
+			game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(msg, "All")
+		end
 	end
+	sendMessage(bypassingmsg)
 end
 
-local function removeHighlight(target)
-	if highlightEnabled and target and target.Character and target.Character:FindFirstChildOfClass("Highlight") then
-		target.Character:FindFirstChildOfClass("Highlight"):Destroy()
+local function convertText()
+	local text = bypassingmsg
+	local convertedText = ""
+
+	local conversionTableUpper = {
+		A = "Ạ", B = "Ḅ", C = "C", D = "Ḍ", E = "Ẹ",
+		F = "F", G = "Ģ", H = "Ḥ", I = "Ị", J = "J",
+		K = "Ḳ", L = "Ḷ", M = "Ṃ", N = "Ṇ", O = "Ọ",
+		P = "Р", Q = "Q", R = "Ṛ", S = "Ṣ", T = "Ṭ",
+		U = "Ụ", V = "Ṿ", W = "Ẉ", X = "Ẋ", Y = "Ỵ", Z = "Ẓ"
+	}
+
+	local conversionTableLower = {
+		a = "ạ", b = "ḅ", c = "c", d = "ḍ", e = "ẹ",
+		f = "f", g = "ɡ", h = "ḥ", i = "ị", j = "ј",
+		k = "ḳ", l = "ḷ", m = "ṃ", n = "ṇ", o = "ọ",
+		p = "р", q = "q", r = "ṛ", s = "ṣ", t = "ṭ",
+		u = "ụ", v = "ṿ", w = "ẉ", x = "ẋ", y = "ỵ", z = "ẓ", ["|"] = "\r",
+	}
+
+	for char in text:gmatch(".") do
+		local convertedChar = conversionTableUpper[char] or conversionTableLower[char] or char
+		convertedText = convertedText .. convertedChar .. "͎"
 	end
-end
 
-local function predictPosition(target)
-	if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-		local velocity = target.Character.HumanoidRootPart.Velocity
-		local position = target.Character[lockPart].Position
-		local predictedPosition = position + (velocity * predictionFactor)
-		return predictedPosition
-	end
-	return nil
-end
+	bypassingmsg = convertedText
+end  
 
-local function handleToggle()
-	if debounce then return end
-	debounce = true
-	toggleState = not toggleState
-	wait(0.3)
-	debounce = false
+function bypasschatmsg()
+	if bypassingmsg == "" then bypassingmsg = "Moon on top!" end
+	
+	convertText()
+	sending()
+	bypassingmsg = ""
 end
 
 if identifyexecutor() then else Notif("identify executor failed. Your exploit will not support some features.") end
@@ -230,11 +387,6 @@ function Unfly()
 end
 
 local Players = game:GetService("Players")
-
-function getRoot(char)
-	local rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
-	return rootPart
-end
 
 IYMouse = Players.LocalPlayer:GetMouse()
 iyflyspeed = 2
@@ -331,47 +483,6 @@ function Notif(msg)
 	end)
 end
 
-loop = RunService.RenderStepped:Connect(function()
-	if aimbotEnabled then
-		updateFOVRing()
-
-		local localPlayer = Players.LocalPlayer.Character
-		local cam = workspace.CurrentCamera
-		local screenCenter = workspace.CurrentCamera.ViewportSize / 2
-
-		if Toggle then
-			if UserInputService:IsKeyDown(ToggleKey) then
-				handleToggle()
-			end
-		else
-			toggleState = UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2)
-		end
-
-		if toggleState then
-			if not currentTarget then
-				currentTarget = getClosest(cam.CFrame)
-				highlightTarget(currentTarget)
-			end
-
-			if currentTarget and currentTarget.Character and currentTarget.Character:FindFirstChild(lockPart) then
-				local predictedPosition = predictPosition(currentTarget)
-				if predictedPosition then
-					workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame:Lerp(CFrame.new(cam.CFrame.Position, predictedPosition), smoothing)
-				end
-				FOVring.Color = Color3.fromRGB(0, 255, 0)
-			else
-				FOVring.Color = Color3.fromRGB(255, 128, 128)
-			end
-		else
-			if currentTarget and highlightEnabled then
-				removeHighlight(currentTarget)
-			end
-			currentTarget = nil
-			FOVring.Color = Color3.fromRGB(255, 128, 128)
-		end
-	end
-end)
-
 function GetGameName()
 	local success, result = pcall(function()
 		return MarketplaceService:GetProductInfo(game.PlaceId).Name
@@ -385,6 +496,7 @@ function GetGameName()
 end
 
 --home
+local typeoftestoption
 local homeexecgrabber = identifyexecutor()
 HomeSection:NewLabel("Welcome, "..plr.Name.."!")
 HomeSection:NewLabel(GetGameName())
@@ -401,27 +513,62 @@ HomeSection:NewButton("Join discord", "rawr", function()
 	end
 end)
 
+HomeSection:NewDropdown("Type of test", "rawr", {"Normal UNC Test", "Deep UNC Test", "SUNC Test", "Deep Vulnerability Test", "MoreUNC Test"}, function(currentOption)
+	typeoftestoption = currentOption
+end)
+
+HomeSection:NewButton("Run Executor Test", "rawr", function()
+	SaveConfig()
+	if typeoftestoption == "Normal UNC Test" then
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/pasteisback/MoonScripts/refs/heads/main/unctestuniversal.lua"))() -- tests 83-86 functions
+	elseif typeoftestoption == "Deep UNC Test" then
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/pasteisback/MoonScripts/refs/heads/main/DeepUNCTest.lua"))() -- tests 248 functions
+	elseif typeoftestoption == "SUNC Test" then
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/pasteisback/MoonScripts/refs/heads/main/suncuniversal.lua"))() -- tests 105ish functions
+	elseif typeoftestoption == "Deep Vulnerability Test" then
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/pasteisback/MoonScripts/refs/heads/main/DeepVulnerabilityTest.lua"))()
+	elseif typeoftestoption == "MoreUNC Test" then
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/pasteisback/MoonScripts/refs/heads/main/FixedMoreUNC"))()
+	else
+		Notif("Pick a type of test to run.")
+	end
+end)
+
+HomeSection:NewButton("Rejoin Current Server", "rawr", function()
+	local PlaceId = game.PlaceId
+	local JobId = game.JobId
+	SaveConfig()
+	if #Players:GetPlayers() <= 1 then
+		Players.LocalPlayer:Kick("\nRejoining...")
+		wait()
+		TeleportService:Teleport(PlaceId, Players.LocalPlayer)
+	else
+		TeleportService:TeleportToPlaceInstance(PlaceId, JobId, Players.LocalPlayer)
+	end
+end)
+
 --universal
 USection:NewToggle("Aimbot", "rawr", function(state)
 	SaveConfig()
 	if state then
-		aimbotEnabled = true
+		turnonaimbot()
+		aimlockTOGGLE = true
 	else
-		aimbotEnabled = false
+		turnoffaimbot()
+		aimlockTOGGLE = false
 	end
 end)
 
-USection:NewSlider("Smoothing", "rawr", 5, 0.01, function(s)
-	SaveConfig()
-	smoothing = s
+USection:NewToggle("Trigger Bot", "rawr", function(state)
+	triggerEnabled = state
 end)
 
-USection:NewSlider("Prediction", "rawr", 5, 0.01, function(s)
+USection:NewSlider("Smoothness", "rawr", 5, 0.01, function(s)
 	SaveConfig()
-	predictionFactor = s
+	Smoothness = s
 end)
 
-USection:NewToggle("TeamCheck", "rawr", function(state)
+USection:NewToggle("Team Check", "rawr", function(state)
 	SaveConfig()
 	if state then
 		teamCheck = true
@@ -430,9 +577,27 @@ USection:NewToggle("TeamCheck", "rawr", function(state)
 	end
 end)
 
+USection:NewToggle("Dead Check", "rawr", function(state)
+	SaveConfig()
+	if state then
+		deadCheck = true
+	else
+		deadCheck = false
+	end
+end)
+
+USection:NewToggle("Wall Check", "rawr", function(state)
+	SaveConfig()
+	if state then
+		wallCheck = true
+	else
+		wallCheck = false
+	end
+end)
+
 USection:NewDropdown("Target Part", "rawr", {"HumanoidRootPart", "Head"}, function(currentOption)
 	SaveConfig()
-	lockPart = currentOption
+	aimlockTargetingPart = currentOption
 end)
 
 USection:NewToggle("FOV", "rawr", function(state)
@@ -444,6 +609,18 @@ USection:NewToggle("FOV", "rawr", function(state)
 	end
 end)
 
+USection:NewKeybind("Trigger Bot Keybind", "rawr", Enum.KeyCode.F, function()
+	triggerEnabled = not triggerEnabled
+end)
+
+USection:NewTextBox("Message to bypass", "rawr", function(txt)
+	bypassingmsg = txt
+end)
+
+USection:NewButton("Send Bypassed Message", "rawr", function()
+	bypasschatmsg()
+end)
+
 USection:NewSlider("WalkSpeed", "rawr", 145, 0, function(s)
 	game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = s
 end)
@@ -452,18 +629,92 @@ USection:NewSlider("JumpPower", "rawr", 545, 0, function(s)
 	game.Players.LocalPlayer.Character.Humanoid.JumpPower = s
 end)
 
-local rapetarget = ""
-USection:NewTextBox("User to rape", "rawr", function(txt)
+USection:NewButton("ESP", "rawr", function()
 	SaveConfig()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/pasteisback/MoonScripts/refs/heads/main/ReworkedESP"))()
+end)
+
+local rapetarget = ""
+local speedofrape = 10
+
+USection:NewTextBox("User to rape", "rawr", function(txt)
 	rapetarget = txt
 end)
 
-USection:NewToggle("Rape", "rawr", function(state)
-	if state then
-		wait()
+USection:NewSlider("Speed of rape", "rawr", 100, 1, function(s)
+	speedofrape = s
+end)
 
+local bang
+local bangAnim
+local bangDied
+local bangLoop
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+function performAction(targetplr)
+	if not targetplr or not targetplr.Character or not targetplr.Character:FindFirstChild("Humanoid") then
+		warn("Invalid target player")
+		return
+	end
+	
+	local humanoid = plr.Character:FindFirstChildWhichIsA("Humanoid")
+
+	if not humanoid then
+		warn("Local player character not found.")
+		return
+	end
+
+	bangAnim = Instance.new("Animation")
+	bangAnim.AnimationId =  not r15(plr) and "rbxassetid://148840371" or "rbxassetid://5918726674"
+	bang = humanoid:LoadAnimation(bangAnim)
+	bang:Play(0.1, 1, 1)
+	bang:AdjustSpeed(speedofrape / 10)
+
+	bangDied = humanoid.Died:Connect(function()
+		cleanup()
+	end)
+
+	local targetRoot = getTorso(targetplr.Character)
+	local rootPart = getRoot(plr.Character)
+
+	if not targetRoot or not rootPart then
+		cleanup()
+		return
+	end
+
+	local bangOffset = CFrame.new(0, 0, 1.1)
+
+	bangLoop = RunService.Stepped:Connect(function()
+		pcall(function()
+			rootPart.CFrame = targetRoot.CFrame * bangOffset
+		end)
+	end)
+end
+
+function cleanup()
+	if bang then bang:Stop() end
+	if bangAnim then bangAnim:Destroy() end
+	if bangDied then bangDied:Disconnect() end
+	if bangLoop then bangLoop:Disconnect() end
+	bang = nil
+	bangAnim = nil
+	bangDied = nil
+	bangLoop = nil
+end
+
+USection:NewToggle("Rape", "rawr", function(state)
+	local targetPlayer = Players:FindFirstChild(rapetarget)
+
+	if state then
+		if targetPlayer then
+			performAction(targetPlayer)
+		else
+			
+		end
 	else
-		print("Toggle Off")
+		cleanup()
 	end
 end)
 
@@ -552,7 +803,7 @@ end)
 Section:NewButton("Arrest Bypass", "rawr", function()
 	SaveConfig()
 	local exec = identifyexecutor()
-	if exec == "Xeno" or "Solara V3.0.0" or "Ugc" then Notif(exec.."may not support this feature.") end
+	if exec == "Xeno" or "Solara V3.0.0" then Notif(exec.." may not support this feature.") end
 	for i,v in pairs(getconnections(workspace:WaitForChild("Remote").arrestPlayer.OnClientEvent)) do
 		v:Disable()
 	end
@@ -580,20 +831,31 @@ end)
 
 Section:NewButton("Arrest All", "rawr", function()
 	SaveConfig()
-	local Player = game.Players.LocalPlayer
-	local cpos = Player.Character.HumanoidRootPart.CFrame
-	for i,v in pairs(game.Teams.Criminals:GetPlayers()) do
-		if v.Name ~= Player.Name then
-			local i = 10
+	local Player = game:GetService("Players").LocalPlayer
+	local cpos = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") and Player.Character.HumanoidRootPart.CFrame or nil
+
+	local Criminals = game:GetService("Teams"):FindFirstChild("Criminals")
+	if not Criminals then
+		warn("Criminals team not found!")
+		return
+	end
+
+	for i, v in pairs(Criminals:GetPlayers()) do
+		if v.Name ~= Player.Name and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+			local count = 10
 			repeat
-				wait()
-				i = i-1
+				task.wait()
+				count = count - 1
 				game.Workspace.Remote.arrest:InvokeServer(v.Character.HumanoidRootPart)
 				Player.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1)
-			until i == 0
+			until count == 0
 		end
 	end
-	Player.Character.HumanoidRootPart.CFrame = cpos
+
+	if cpos then
+		Player.Character.HumanoidRootPart.CFrame = cpos
+	end
+
 	Notif("Arrested everyone.")
 end)
 
@@ -1168,6 +1430,30 @@ RSection:NewButton("ESP", "rawr", function()
 	loadstring(game:HttpGet(('https://raw.githubusercontent.com/pasteisback/Xploit/refs/heads/main/ArsenalESP')))()
 end)
 
+local rivalsmoonhubdevicethathasbeenchosen = ""
+
+RSection:NewDropdown("Device", "rawr", {"Mobile", "PC", "Console"}, function(currentOption)
+	SaveConfig()
+
+	if currentOption == "Mobile" then
+		rivalsmoonhubdevicethathasbeenchosen = "Touch"
+	elseif currentOption == "PC" then
+		rivalsmoonhubdevicethathasbeenchosen = "MouseKeyboard"
+	elseif currentOption == "Console" then
+		rivalsmoonhubdevicethathasbeenchosen = "Gamepad"
+	end
+end)
+
+RSection:NewButton("Change Device", "rawr", function()
+	SaveConfig()
+	local rivalsremote = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Replication"):WaitForChild("Fighter"):WaitForChild("SetControls")
+
+	if rivalsmoonhubdevicethathasbeenchosen ~= "" then
+		rivalsremote:FireServer(rivalsmoonhubdevicethathasbeenchosen)
+	else
+		warn("No device selected!")
+	end
+end)
 RSection:NewButton("Fly", "rawr", function()
 	SaveConfig()
 	Notif("Credits to IY dev(s)")
@@ -1179,6 +1465,617 @@ RSection:NewButton("Unfly", "rawr", function()
 	Notif("Credits to IY dev(s)")
 	Unfly()
 end)
+
+--Sharkbite 1
+local function _ESP(model)
+	repeat wait() until model.PrimaryPart
+	for _, part in pairs(model:GetChildren()) do
+		if part:IsA("MeshPart") or part:IsA("Part") then
+			if part:FindFirstChild("MoonESP") then
+				part.MoonESP:Destroy()
+			end
+
+			local box = Instance.new("BoxHandleAdornment")
+			box.Name = "MoonESP"
+			box.Size = part.Size
+			box.Color3 = Color3.new(1, 0, 0)
+			box.Transparency = 0.7
+			box.AlwaysOnTop = true
+			box.Adornee = part
+			box.ZIndex = 10
+			box.Parent = part
+		end
+	end
+end
+
+local function UnESP()
+	for _, shark in pairs(workspace:FindFirstChild("Sharks"):GetChildren()) do
+		if shark:IsA("Model") then
+			for _, part in pairs(shark:GetChildren()) do
+				if part:IsA("MeshPart") or part:IsA("Part") then
+					local espBox = part:FindFirstChild("MoonESP")
+					if espBox then
+						espBox:Destroy()
+					end
+				end
+			end
+		end
+	end
+end
+
+local function SharkESP()
+	local sharkFolder = workspace:FindFirstChild("Sharks")
+	if sharkFolder then
+		for _, shark in pairs(sharkFolder:GetChildren()) do
+			if shark:IsA("Model") then
+				_ESP(shark)
+			end
+		end
+
+		sharkFolder.ChildAdded:Connect(function(shark)
+			if shark:IsA("Model") then
+				_ESP(shark)
+			end
+		end)
+	else
+		warn("Sharks folder not found in workspace!")
+	end
+end
+
+Sh1Section:NewToggle("Shark ESP", "rawr", function(state)
+	SaveConfig()
+	if state then
+		--true
+		SharkESP()
+	else
+		--false
+		UnESP()
+	end
+end)
+
+Sh1Section:NewButton("Redeem all codes", "rawr", function()
+	local Events = workspace:WaitForChild("Events")
+	local Shop = Events:WaitForChild("Shop")
+	local codes = {
+		"1BILLION",
+		"SHARKBITE2",
+		"DUCKYRAPTOR",
+		"RGBSHARK",
+		"SIMONSSPACE"
+	}
+	for _, code in pairs(codes) do
+		Shop:WaitForChild("TwitterCode"):InvokeServer(code)
+	end
+end)
+
+--Bedwars
+BWSection:NewLabel("Bedwars is coming veryyyyyyy soon!! trust the wait. bw is a hard ac to bypass.")
+
+--Slap battles
+local auraEnabled = false
+local antiKnockbackEnabled = false
+local cooldown = 0.7
+local auraRange = 12
+
+local function getNearbyPlayersForSlapBattles()
+	local nearbyPlayers = {}
+	local myCharacter = plr.Character
+	if not myCharacter then return {} end
+	local myRoot = myCharacter:FindFirstChild("HumanoidRootPart")
+	if not myRoot then return {} end
+
+	for _, target in pairs(Players:GetPlayers()) do
+		if target ~= plr and target.Character then
+			local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
+			if targetRoot then
+				local distance = (myRoot.Position - targetRoot.Position).Magnitude
+				if distance <= auraRange then
+					table.insert(nearbyPlayers, target)
+				end
+			end
+		end
+	end
+	return nearbyPlayers
+end
+
+local function slapAuraLoop()
+	while auraEnabled do
+		local targets = getNearbyPlayersForSlapBattles()
+		for _, target in ipairs(targets) do
+			local leftArm = target.Character:FindFirstChild("Left Arm") or target.Character:FindFirstChild("LeftUpperArm")
+			if leftArm then
+				game.ReplicatedStorage:WaitForChild("b"):FireServer(leftArm)
+			end
+		end
+		task.wait(cooldown)
+	end
+end
+
+SlbSection:NewDropdown("Type of slap aura", "rawr", {"UD", "Semi-UD", "DTC"}, function(currentOption)
+	SaveConfig()
+
+	if currentOption == "UD" then
+		cooldown = 0.7
+	elseif currentOption == "Semi-UD" then
+		cooldown = 0.5
+	elseif currentOption == "DTC" then
+		cooldown = 0.3
+	end
+end)
+
+SlbSection:NewSlider("Slap Aura Range", "rawr", 15, 1, function(s)
+	auraRange = s
+	SaveConfig()
+end)
+
+SlbSection:NewToggle("Slap Aura", "rawr", function(state)
+	auraEnabled = state
+	SaveConfig()
+	if state then
+		--true
+		auraEnabled = state
+	else
+		--false
+		auraEnabled = state
+	end
+end)
+
+SlbSection:NewToggle("Anti-Knockback", "rawr", function(state)
+	antiKnockbackEnabled = state
+	SaveConfig()
+	if state then
+		--true
+		antiKnockbackEnabled = state
+	else
+		--false
+		antiKnockbackEnabled = state
+	end
+end)
+
+RunService.Stepped:Connect(function()
+	if antiKnockbackEnabled and plr.Character then
+		local humanoidRootPart = plr.Character:FindFirstChild("HumanoidRootPart")
+		local humanoid = plr.Character:FindFirstChild("Humanoid")
+
+		if humanoidRootPart and humanoid then
+			local currentVelocity = humanoidRootPart.Velocity
+			humanoidRootPart.Velocity = Vector3.new(currentVelocity.X, math.clamp(currentVelocity.Y, -50, 50), currentVelocity.Z)
+			humanoid:ChangeState(Enum.HumanoidStateType.Running)
+		end
+	end
+end)
+
+--BGS
+BGSSection:NewLabel("Join BGS for the modules to load.")
+BGSSection:NewButton("Join BGS", "rawr", function()
+	game:GetService("TeleportService"):Teleport(2512643572, game.Players.LocalPlayer)
+end)
+if game.PlaceId == 2512643572 then
+	local NetworkRemoteEvent = ReplicatedStorage:WaitForChild("NetworkRemoteEvent")
+	local NetworkRemoteFunction = ReplicatedStorage:WaitForChild("NetworkRemoteFunction")
+	
+	local isFarming = false
+	local isAutoHatching = false
+	local farmSpeed = 0.2
+
+	local function turnoffblowlock()
+		pcall(function()
+			NetworkRemoteEvent:FireServer("SaveSetting", "Bubble Lock (Stops blowing bubbles)", false)
+		end)
+	end
+
+	local function turnonblowlock()
+		pcall(function()
+			NetworkRemoteEvent:FireServer("SaveSetting", "Bubble Lock (Stops blowing bubbles)", true)
+		end)
+	end
+
+	local function AutoFarm()
+		while isFarming do
+			pcall(function()
+				NetworkRemoteEvent:FireServer("Teleport", "Sell")
+				NetworkRemoteEvent:FireServer("BlowBubble")
+				turnoffblowlock()
+				task.wait(farmSpeed)
+			end)
+		end
+	end
+
+	function setupMoonValues()
+		local moonvalues = Instance.new("Folder", LocalPlayer)
+		moonvalues.Name = "MoonValues"
+
+		local currentisland = Instance.new("StringValue", moonvalues)
+		currentisland.Name = "CurrentIsland"
+
+		task.spawn(function()
+			while task.wait(0.2) do
+				for _, folder in pairs(workspace:FindFirstChild("FloatingIslands"):GetChildren()) do
+					if folder:IsA("Folder") then
+						if #folder:GetChildren() == 0 then
+						else
+							currentisland.Value = folder.Name
+						end
+					end
+				end
+			end
+		end)
+	end
+
+	setupMoonValues()
+
+	local function AutoHatch(egg)
+		local eggtoauto = egg or "Common Egg"
+		while isAutoHatching do
+			pcall(function()
+				NetworkRemoteEvent:FireServer("PurchaseEgg", eggtoauto)
+				turnonblowlock()
+				task.wait(farmSpeed)
+			end)
+		end
+	end
+
+	function isInBGSGroup()
+		return LocalPlayer:IsInGroup(3333298)
+	end
+
+	if isInBGSGroup() then
+		BGSSection:NewLabel("You are in the BGS roblox group!")
+	else
+		BGSSection:NewLabel("You are not in the BGS roblox group!")
+	end
+
+	BGSSection:NewTextBox("Speed", "rawr", function(txt)
+		local num = tonumber(txt:gsub("%D", "")) or 0.2
+		farmSpeed = num
+	end)
+
+	BGSSection:NewToggle("Auto-Farm", "rawr", function(state)
+		isFarming = state
+		task.spawn(AutoFarm)
+	end)
+
+	local eggtarget = ""
+	BGSSection:NewTextBox("Egg to auto hatch", "rawr", function(txt)
+		eggtarget = txt
+	end)
+
+	BGSSection:NewLabel("WARNING: AUTO HATCH WILL NOT WORK UNLESS YOU ARE IN FRONT OF THE EGG!!")
+
+	BGSSection:NewToggle("Auto-Hatch", "rawr", function(state)
+		local StarterGui = game:GetService("StarterGui")
+		StarterGui:SetCore("SendNotification", {
+			Title = "Moon | BGS",
+			Text = "You must be by the egg for this to work.",
+			Duration = 5
+		})
+		isAutoHatching = state
+		task.spawn(function()
+			AutoHatch(eggtarget)
+		end)
+	end)
+
+	BGSSection:NewToggle("Auto-Blow", "rawr", function(state)
+		task.spawn(function()
+			while state do
+				pcall(function()
+					NetworkRemoteEvent:FireServer("BlowBubble")
+					turnoffblowlock()
+					task.wait(farmSpeed)
+				end)
+			end
+		end)
+	end)
+
+	BGSSection:NewButton("Spin to win", "rawr", function()
+		pcall(function()
+			NetworkRemoteEvent:FireServer("SpinToWin")
+		end)
+	end)
+
+	BGSSection:NewButton("Unlock all candy land rewards", "rawr", function()
+		task.spawn(function()
+			for i = 1, 150 do
+				print("[Moon hub]: Buying Tier:", i)
+				pcall(function()
+					NetworkRemoteEvent:FireServer("CollectReward", "Candy Land", i)
+				end)
+				task.wait(1.5)
+			end
+		end)
+	end)
+
+	BGSSection:NewButton("Collect group reward", "rawr", function()
+		if not isInBGSGroup() then
+			local StarterGui = game:GetService("StarterGui")
+			StarterGui:SetCore("SendNotification", {
+				Title = "Moon | BGS",
+				Text = "You must be in the BGS group for this to work.",
+				Duration = 5
+			})
+		else
+			pcall(function()
+				NetworkRemoteFunction:InvokeServer("CollectGroupReward")
+			end)
+		end
+	end)
+
+	BGSSection:NewButton("Verify", "rawr", function()
+		pcall(function()
+			NetworkRemoteFunction:InvokeServer("CheckSubscribed", "UC3CdsWS6gybANFxMwpzYYOw")
+		end)
+	end)
+
+	BGSSection:NewButton("Buy merchant item 1", "rawr", function()
+		pcall(function()
+			NetworkRemoteEvent:FireServer("BuyMerchantItem", 1)
+		end)
+	end)
+
+	BGSSection:NewButton("Buy merchant item 2", "rawr", function()
+		pcall(function()
+			NetworkRemoteEvent:FireServer("BuyMerchantItem", 2)
+		end)
+	end)
+
+	BGSSection:NewButton("Buy merchant item 3", "rawr", function()
+		pcall(function()
+			NetworkRemoteEvent:FireServer("BuyMerchantItem", 3)
+		end)
+	end)
+
+	BGSSection:NewButton("Unlock ALL game islands", "rawr", function()
+		task.spawn(function()
+			for _, model in pairs(workspace:FindFirstChild("Checkpoints"):GetChildren()) do
+				local teleportPart = model:FindFirstChild("TeleportPoint")
+				if teleportPart then
+					pcall(function()
+						LocalPlayer.Character:SetPrimaryPartCFrame(teleportPart.CFrame)
+					end)
+					task.wait(farmSpeed)
+				end
+			end
+		end)
+	end)
+
+	BGSSection:NewButton("Unlock all islands", "rawr", function()
+		local islands = {"The Floating Island", "Space", "The Twilight", "The Skylands", "The Void"}
+		task.spawn(function()
+			for _, island in ipairs(islands) do
+				pcall(function()
+					NetworkRemoteEvent:FireServer("TeleportToCheckpoint", island)
+				end)
+				task.wait(farmSpeed)
+			end
+		end)
+	end)
+
+	BGSSection:NewButton("Go to candy land", "rawr", function()
+		pcall(function()
+			NetworkRemoteEvent:FireServer("Teleport", "Candy LandSpawn")
+		end)
+	end)
+
+	BGSSection:NewButton("Redeem all codes", "rawr", function()
+		local StarterGui = game:GetService("StarterGui")
+		StarterGui:SetCore("SendNotification", {
+			Title = "Moon | BGS",
+			Text = "If redeem all codes isnt working, your account is under 5-10 days old.",
+			Duration = 5
+		})
+		local codes = {
+			"SIRCFENNERISCOOL",
+			"HAMMIEISBADATROCKETLEAGUE",
+			"MYTHICAL",
+			"UPDATE66",
+			"SEASON 8",
+			"FROSTPORTAL",
+			"SUPERSPOOKY",
+			"UPDATE78",
+			"UPDATE77",
+			"20HOURLUCK",
+			"MINIME",
+			"TOFUU",
+			"TWITTERRELEASE",
+			"LOTSOFGEMS",
+			"SPOTTED",
+			"SUPERCOINS",
+			"CHRISTMAS",
+			"SANTA",
+			"BLUECREW",
+			"MORECANDY",
+			"OBSCUREENTITY",
+			"SIRCFENNER",
+			"FREEEGG",
+			"FREECOINS",
+			"SUPERGEMS",
+			"CANDYCANES",
+			"SYLENTLY",
+			"TWIISTED",
+			"CANDY",
+			"FREEPET",
+			"SECRETPET",
+			"PINKARMYPET",
+			"EXTRALUCK",
+			"SUPERSECRET",
+			"SUPERLUCK",
+			"FREEBOOST",
+			"UPDATE16",
+			"BEACHBOOST",
+			"SECRETCODE",
+			"STPATRICKS",
+			"300M",
+			"FREE",
+			"UPDATE21",
+			"POSEIDON",
+			"LOSTCITY",
+			"CHOCOLATEEGG",
+			"SECRETLUCKCODE",
+			"OCEAN",
+			"ANCIENTTIMES",
+			"SECRETBOOST",
+			"DEETERPLAYS",
+			"SYLENTLYISCOOL",
+			"LUCKYDAY",
+			"SUPERSPEED",
+			"SUPERBEACH",
+			"SPEEDBOOST",
+			"BRITEJUICE",
+			"SPEEDYBOI",
+			"THANKYOU",
+			"SPECIAL",
+			"ULTRASPEED",
+			"UNDERTHESEA",
+			"HAPPYEASTER",
+			"BUNNY",
+			"ATLANTISHATS",
+			"INTHEPAST",
+			"TOMCAT",
+			"MYTHICAL",
+			"THANKS",
+			"400M",
+			"NEWORLD",
+			"SUMMER",
+			"UNCLESAM",
+			"2HOURLUCK",
+			"FANCY2",
+			"BUBBLEPASS",
+			"PASS",
+			"HALLOWEEN",
+			"FREEHATCHSPEED",
+			"CHRISTMASBOOST",
+			"CLOWN",
+			"SIRCFENNERNOOB",
+			"VALENTINES",
+			"600M",
+			"FREESPEED",
+			"PORTAL",
+			"CHALLENGES",
+			"SEASON7",
+			"UPDATE45",
+			"UPDATE46",
+			"UPDATE47",
+			"UPDATE48",
+			"UPDATE49",
+			"UPDATE50",
+			"UPDATE51",
+			"UPDATE52",
+			"UPDATE53",
+			"UPDATE54",
+			"UPDATE55",
+			"MEGALUCKBOOST",
+			"UPDATE57",
+			"UPDATE58",
+			"UPDATE59",
+			"UPDATE60",
+			"UPDATE61",
+			"AUTUMNSALE",
+			"COSTUME",
+			"GHOSTS",
+			"300K",
+			"YOUTUBESPEED",
+			"BLIZZYRDOP",
+			"FREESPEEDBOOST",
+			"SPLIT",
+			"SECRETVIDEOCODE",
+			"SHINYSTREAM",
+			"CANDYCANE",
+			"MILKANDCOOKIES",
+			"HAPPYHOLIDAYS",
+			"KINGMUSHGANG",
+			"JONATHAN",
+			"EPICSECRETCODE",
+			"UPDATE67",
+			"JOLLYCHRISTMAS",
+			"SUPERBOOST",
+			"SANTACLAUS",
+			"UPDATE68",
+			"UPDATE70",
+			"BLIZZYWIZZY",
+			"LUCKYCODE",
+			"UPDATE71",
+			"SYLENTLYBEST",
+			"UPDATE72",
+			"UPDATE73",
+			"UPDATE74",
+			"UPDATE75",
+			"KRAKEN",
+			"COLORFUL",
+			"FIREWORKS",
+			"JULY4TH",
+			"REALLYFANCY",
+			"FANCY",
+			"SECRETS",
+			"TRICKORTREAT",
+			"SEASON3",
+			"HAMMIELSBADATROCKETLEAGUE",
+			"CIRCUS",
+			"PART2",
+			"CUPID",
+			"600MBOOST",
+			"MEGASALE",
+			"GALACTIC",
+			"NEWEGG",
+			"MYSTIC",
+			"MUSHROOM",
+			"EEASTER2020",
+			"SEASON 8",
+			"MERCHANT",
+			"MYTHIC",
+			"SPRING",
+			"VINE",
+			"METEOR",
+			"SHADOW",
+			"SUPERSALE",
+			"MEGASPEEDBOOST",
+			"CARNIVAL",
+			"CARNIVAL2",
+			"VACATION",
+			"CITRUS",
+			"AUTUMN",
+			"AUTUMNSALE2",
+			"SPOOKYHALLOWEEN",
+			"UPDATE63",
+			"UPDATE64",
+			"YOUTUBE",
+			"SPOOKYCODE",
+			"SUPERSECRETCODE",
+			"YOUTUBELUCK",
+			"SYLENTLYOP",
+			"UPDATE65",
+			"MYTHICSTREAM",
+			"STREAMSPEED",
+			"STREAMLUCK",
+			"RUDOPLH",
+			"KINGSLIMEGANG",
+			"BGSXMAS",
+			"CHRISTMAS2020",
+			"CHRISTMASPART2",
+			"JOLLYCHRISTMAS2",
+			"CHRISTMASSTREAM",
+			"2020",
+			"ROYALTY",
+			"BGSSTREAM",
+			"RUBMLESTREAM",
+			"VALENTINE",
+			"HIDDENVIDEOCODE",
+			"BLIZZYRDBEST",
+			"STPATRICKLUCK",
+			"LUCKIEST",
+			"EASTER21",
+			"GLITCH",
+			"GOLEMITE"
+		}
+		task.spawn(function()
+			for _, code in ipairs(codes) do
+				pcall(function()
+					NetworkRemoteFunction:InvokeServer("RedeemCode", code)
+				end)
+				task.wait(farmSpeed)
+			end
+		end)
+	end)
+end
 
 --Arsenal
 ASection:NewButton("Slient-Aim", "rawr", function()
@@ -2169,14 +3066,15 @@ if game.PlaceId == 16732694052 then
 		warn("Moon fisch failed to load:", Error)
 	end
 end
-
+FGSSection:NewLabel("This will come out with bedwars!")
+BWSection:NewLabel("BW AC is hard to bypass")
 --Settings
 SetsSection:NewDropdown("Moon Hub Theme", "rawr", {"Ocean", "LightTheme", "MoonTheme", "DarkTheme", "GrapeTheme", "BloodTheme", "Midnight", "Sentinel", "Synapse"}, function(currentOption)
 	Notif("Changing theme...", 5)
 	config.theme = currentOption
 	SaveConfig()
 	wait()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/pasteisback/MoonScripts/refs/heads/main/MoonHub.lua"))()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/pasteisback/MoonHub/refs/heads/main/getmoonhub.xyz.luau"))()
 	Library:DestroyUI()
 end)
 
@@ -2192,4 +3090,48 @@ SetsSection:NewButton("Reset Config", "rawr", function()
 	loadConfig()
 end)
 
+local TeleportCheck = false
+Players.LocalPlayer.OnTeleport:Connect(function(State)
+	if (not TeleportCheck) and queueteleport then
+		TeleportCheck = true
+		queueteleport('loadstring(game:HttpGet("https://raw.githubusercontent.com/pasteisback/MoonHub/refs/heads/main/getmoonhub.xyz.luau"))()')
+	end
+end)
+
+if IsOnMobile then 
+	Notif("Some features may be limited on mobile.") 
+end
+
+local function setAimlock(input)
+	if not aimlockTOGGLE then return end
+	if input.UserInputType == Enum.UserInputType.MouseButton2 then
+		AimlockEnabled = true
+		presssingaimlock = true
+		print(AimlockEnabled)
+	end
+end
+
+local function unsetAimlock(input)
+	if not aimlockTOGGLE then return end
+	if input.UserInputType == Enum.UserInputType.MouseButton2 then
+		AimlockEnabled = false
+		presssingaimlock = false
+		print(AimlockEnabled)
+	end
+end
+
+UserInputService.InputBegan:Connect(setAimlock)
+UserInputService.InputEnded:Connect(unsetAimlock)
+
+RunService.RenderStepped:Connect(RenderStepForAimlocking)
+
+RunService.Heartbeat:Connect(function()
+	if triggerEnabled and trigbotTarget then
+		mouse1click()
+	end
+end)
+
 SaveConfig()
+
+print("[Moon hub]: Fully loaded. "..config.bind.." to toggle menu. dsc.gg/moonexec")
+Notif("Fully loaded. "..config.bind.." to toggle menu. dsc.gg/moonexec")
